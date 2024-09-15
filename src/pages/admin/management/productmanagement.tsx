@@ -61,17 +61,13 @@ const Productmanagement = () => {
   const submitHandler = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if( !nameUpdate || !priceUpdate || !stockUpdate || !categoryUpdate ){
-      return;
-    }
-
     const formData = new FormData( );
 
-    formData.set( "price", priceUpdate.toString( ) );
-    formData.set( "photo", photoFile as File );
-    formData.set( "name", nameUpdate );
-    formData.set( "category", categoryUpdate );
-    formData.set( "stock", stockUpdate.toString( ) );
+    if(priceUpdate) formData.set( "price", priceUpdate.toString( ) );
+    if(photoFile) formData.set( "photo", photoFile as File );
+    if(nameUpdate) formData.set( "name", nameUpdate );
+    if(categoryUpdate) formData.set( "category", categoryUpdate );
+    if(stockUpdate !== undefined) formData.set( "stock", stockUpdate.toString( ) );
 
     const res = await updateProduct( {
       id: user?._id!,
@@ -90,10 +86,8 @@ const Productmanagement = () => {
   }
 
   const deleteProductHandler = async( e: React.MouseEvent<HTMLButtonElement, MouseEvent> ) => {
-    e.preventDefault();
-
     const res = await deleteProduct( {
-      id: user?._id!,
+      userId: user?._id!,
       productId: data?.product._id!
     } );
 

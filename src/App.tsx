@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Loader from './components/Loader'
 import Header from './components/Header'
-import { Toaster } from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase'
 import { userExist, userNotExist } from './redux/reducer/userReducer'
@@ -42,12 +42,17 @@ const App = () => {
 
   useEffect( ( ) => {
   onAuthStateChanged( auth, async( user ) => {
-    if( user ){
-      const data = await getUser( user.uid );
-      dispatch( userExist( data.user ) );
-    } else {
-      dispatch( userNotExist( ) );
+    try{
+      if( user ){
+        const data = await getUser( user.uid );
+        dispatch( userExist( data.user ) );
+      } else {
+        dispatch( userNotExist( ) );
+      }
+    } catch( e ){
+      console.log( e );
     }
+    
   } )
   }, [ ] );
   
