@@ -4,7 +4,7 @@ import { CreateProductRequest, DeleteProductRequest, MessageResponse, ProductCat
 export const productAPI = createApi( {
     reducerPath: "productApi",
     baseQuery: fetchBaseQuery( { baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/product/` } ),
-    tagTypes: ["product"],
+    tagTypes: ["product", "allProducts"],
     endpoints: ( builder ) => ( {
         createProduct: builder.mutation<MessageResponse, CreateProductRequest>( {
             query: ( { id, formData } ) => ( {
@@ -12,7 +12,7 @@ export const productAPI = createApi( {
                 method: "POST",
                 body: formData,
             } ),
-            invalidatesTags: [ "product" ]
+            invalidatesTags: [ "allProducts" ]
         } ),
         updateProduct: builder.mutation<MessageResponse,UpdateProductRequest>( {
             query: ( { id, productId, formData } ) => ( {
@@ -20,26 +20,26 @@ export const productAPI = createApi( {
                 method: "PUT",
                 body: formData,
             } ),
-            invalidatesTags: [ "product" ]
+            invalidatesTags: [ "product", "allProducts" ]
         } ),
         deleteProduct: builder.mutation<MessageResponse,DeleteProductRequest>( {
             query: ( { userId, productId } ) => ( {
                 url: `${productId}?id=${userId}`,
                 method: "DELETE"
             } ),
-            invalidatesTags: [ "product" ]
+            invalidatesTags: [ "allProducts" ]
         } ),
         latestProducts: builder.query<ProductResponse, any>( {
             query: ( ) => "latest",
-            providesTags: [ "product" ],
+            providesTags: [ "allProducts" ],
         } ),
         allProducts: builder.query<ProductResponse, string>( {
             query: ( userId ) => `admin-products?id=${userId}`,
-            providesTags: [ "product" ],
+            providesTags: [ "allProducts" ],
         } ),
         allCategories: builder.query<ProductCategoriesResponse, string>( {
             query: ( ) => "categories",
-            providesTags: [ "product" ],
+            providesTags: [ "allProducts" ],
         } ),
         searchProducts: builder.query<SearchProductResponse, SearchProductRequest>( {
             query: ( data ) => {
@@ -56,7 +56,7 @@ export const productAPI = createApi( {
                 } );
                 return url;
             },
-            providesTags: [ "product" ],
+            providesTags: [ "allProducts" ],
         } ),
         ProductDetails: builder.query<ProductDetailsResponse, string>( {
             query: ( productId ) => productId,

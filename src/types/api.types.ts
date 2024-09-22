@@ -92,5 +92,5 @@ export interface AllOrdersResponse{
 
 export interface OrderDetailsResponse{
     success: boolean;
-    orders: OrderType;
+    order: OrderType;
 }

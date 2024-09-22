@@ -19,34 +19,6 @@ interface DataType {
   action: ReactElement;
 }
 
-// const arr: Array<DataType> = [
-//   {
-//     user: "Charas",
-//     amount: 4500,
-//     discount: 400,
-//     status: <span className="red">Processing</span>,
-//     quantity: 3,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-
-//   {
-//     user: "Xavirors",
-//     amount: 6999,
-//     discount: 400,
-//     status: <span className="green">Shipped</span>,
-//     quantity: 6,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-//   {
-//     user: "Xavirors",
-//     amount: 6999,
-//     discount: 400,
-//     status: <span className="purple">Delivered</span>,
-//     quantity: 6,
-//     action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
-//   },
-// ];
-
 const columns: Column<DataType>[] = [
   {
     Header: "Avatar",
@@ -90,7 +62,7 @@ const Transaction = () => {
           user: order.user.name,
           amount: order.total,
           discount: order.discount,
-          status: <span className="red">{order.status}</span>,
+          status: <span className={ order.status === "Processing" ? "red" : order.status === "Shipped" ? "green" : "purple"}>{order.status}</span>,
           quantity: order.orderItems.length,
           action: <Link to={`/admin/transaction/${order._id}`}>Manage</Link>,
         } ) )

@@ -16,8 +16,10 @@ const Cart = lazy( ( ) => import( "./pages/Cart" ) )
 const Search = lazy( ( ) => import( "./pages/Search" ) )
 const Login = lazy( ( ) => import( "./pages/Login" ) )
 const Shipping = lazy( ( ) => import( './pages/Shipping' ) )
+const Checkout = lazy( ( ) => import( './pages/Checkout' ) )
 const Orders = lazy( ( ) => import( './pages/Orders' ) )
 const OrderDetails = lazy( ( ) => import( './pages/OrderDetails' ) )
+const PageNotFound = lazy( ( ) => import( './pages/PageNotFound' ) )
 //Admin Routes importing
 const Dashboard = lazy(() => import("./pages/admin/dashboard"));
 const Products = lazy(() => import("./pages/admin/products"));
@@ -78,6 +80,7 @@ const App = () => {
             <Route path='/shipping' element={<Shipping/>}/>
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/orderDetails/:id' element={<OrderDetails/>}/>
+            <Route path='/pay' element={<Checkout/>}/>
           </Route>
           
           {/* Admin Routes */}
@@ -109,7 +112,8 @@ const App = () => {
             <Route path="/admin/product/:id" element={<ProductManagement />} />
 
             <Route path="/admin/transaction/:id" element={<TransactionManagement />} />
-          </Route>;
+          </Route>
+          <Route path="*" element={<PageNotFound/>}/>
         </Routes>
       </Suspense>
       <Toaster position="bottom-center"/>
