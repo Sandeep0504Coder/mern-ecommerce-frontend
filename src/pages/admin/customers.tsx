@@ -51,7 +51,6 @@ const columns: Column<DataType>[] = [
 
 const Customers = () => {
   const [ deleteUser ] = useDeleteUserMutation();
-  const navigate = useNavigate();
   const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
 
   const { data, isLoading, isError, error } = useAllUsersQuery( user?._id! );
