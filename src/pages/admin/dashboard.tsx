@@ -8,10 +8,8 @@ import Table from "../../components/admin/DashboardTable";
 import { useStatsQuery } from "../../redux/api/dashboardAPI";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { CustomError } from "../../types/api.types";
-import toast from "react-hot-toast";
 import { Skeleton } from "../../components/Loader";
-// import data from "../../assets/data.json";
+import { Navigate } from "react-router-dom";
 
 const userImg =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
@@ -19,11 +17,11 @@ const userImg =
 const Dashboard = () => {
   const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
 
-  const { data, isLoading, isError, error } = useStatsQuery( user?._id! );
+  const { data, isLoading, isError } = useStatsQuery( user?._id! );
 
   const stats = data?.stats!;
 
-  if( isError ) toast.error( ( error as CustomError ).data.message );
+  if( isError ) return <Navigate to={"/"}/>;
 
   return (
     <div className="admin-container">
@@ -34,7 +32,7 @@ const Dashboard = () => {
           <BsSearch />
           <input type="text" placeholder="Search for data, users, docs" />
           <FaRegBell />
-          <img src={ user?.photo || userImg} alt="User" />
+          <img src={ user?.photo || userImg } alt="User" />
         </div>
 
         <section className="widget-container">

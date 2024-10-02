@@ -1,4 +1,4 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar } from "./types";
 
 export interface MessageResponse{
     success: boolean;
@@ -98,4 +98,19 @@ export interface OrderDetailsResponse{
 export type StatsResponse = {
     success: boolean;
     stats: Stats;
+}
+
+export type PieResponse = {
+    success: boolean;
+    charts: Pie;
+}
+
+export type LineChartsResponse = {
+    success: boolean;
+    charts: Line;
+}
+
+export type BarResponse = {
+    success: boolean;
+    charts: Bar;
 }

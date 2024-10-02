@@ -36,7 +36,7 @@ const NewProduct = () => {
   const createProductHandler = async( e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if( !name || !price || !stock || !category || !photo ){
+    if( !name || !price || stock < 0 || !category || !photo ){
       return;
     }
 

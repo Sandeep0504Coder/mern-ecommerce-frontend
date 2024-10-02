@@ -92,3 +92,45 @@ export type Stats = {
     };
     latestTransaction: LatestTransaction[]
 }
+
+export type Pie = {
+    orderFulfillment: {
+        processing: number;
+        shipped: number;
+        delivered: number;
+    };
+    productCategories: Record<string, number>[];
+    stockAvailability: {
+        inStock: number;
+        outOfStock: number;
+    };
+    revenueDistribution: {
+        netMargin: number;
+        discount: number;
+        productionCost: number;
+        burnt: number;
+        marketingCost: number;
+    };
+    adminCustomer: {
+        admin: number;
+        customer: number;
+    };
+    userAgeGroup: {
+        teen: number;
+        adult: number;
+        old: number;
+    };
+}
+
+export type Line = {
+    users: number[];
+    products: number[];
+    discount: number[];
+    revenue: number[];
+}
+
+export type Bar = {
+    users: number[];
+    products: number[];
+    orders: number[];
+}
