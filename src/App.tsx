@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Loader from './components/Loader'
 import Header from './components/Header'
-import toast, { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase'
 import { userExist, userNotExist } from './redux/reducer/userReducer'

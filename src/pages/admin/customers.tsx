@@ -4,14 +4,12 @@ import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
 import { useSelector } from "react-redux";
-import { UserReducerInitialState } from "../../types/reducer.types";
 import { useAllUsersQuery, useDeleteUserMutation } from "../../redux/api/userAPI";
-import { RootState, server } from "../../redux/store";
+import { RootState } from "../../redux/store";
 import { Skeleton } from "../../components/Loader";
 import { CustomError } from "../../types/api.types";
 import toast from "react-hot-toast";
 import { responseToast } from "../../utils/features";
-import { useNavigate } from "react-router-dom";
 
 interface DataType {
   avatar: ReactElement;

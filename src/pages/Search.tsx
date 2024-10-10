@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ProductCard from "../components/ProductCard"
 import { useAllCategoriesQuery, useSearchProductsQuery } from "../redux/api/productAPI"
 import { CustomError } from "../types/api.types";
 import toast from "react-hot-toast";
 import { Skeleton } from "../components/Loader";
-import { server } from "../redux/store";
 import { CartItemType } from "../types/types";
 import { addToCart } from "../redux/reducer/cartReducer";
 import { useDispatch } from "react-redux";

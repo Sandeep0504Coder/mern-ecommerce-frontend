@@ -2,7 +2,6 @@ import { FaTrash } from "react-icons/fa";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { server } from "../../../redux/store";
-import { useEffect, useState } from "react";
 import { useDeleteOrderMutation, useOrderDetailsQuery, useUpdateOrderMutation } from "../../../redux/api/orderAPI";
 import { OrderItemType, OrderType } from "../../../types/types";
 import { Skeleton } from "../../../components/Loader";

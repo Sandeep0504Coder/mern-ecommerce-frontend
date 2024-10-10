@@ -2,7 +2,6 @@ import {
   AiOutlineSortAscending,
   AiOutlineSortDescending,
 } from "react-icons/ai";
-import { TableCellProps, TableHeaderProps, TableRowProps } from "react-table";
 import {
   Column,
   usePagination,
