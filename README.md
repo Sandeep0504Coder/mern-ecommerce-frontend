@@ -1,4 +1,4 @@
-# MERN E-COMMERCE SERVER
+# MERN E-COMMERCE FRONTEND
 
 Hi! My name is SAndeep Mandal. I have created frontend for my ecommerce website.
 
