@@ -22,6 +22,8 @@
   $color1: white;
   $color2: rgb(46, 46, 46);
   $color3: rgb(0, 104, 136);
+  $brandNameColor1: #01e7a7;
+  $brandNameColor2: #92dfe7;
 
   .red {
     color: red;
@@ -69,9 +71,19 @@
     >a {
       color: $color2;
       letter-spacing: 2px;
-      font-size: 1.2rem;
+      font-size: 2rem;
       &:hover{
         color: $color3;
+      }
+    }
+    >a.brandName{
+      position: absolute;
+      left: 1rem;
+      color: $brandNameColor1;
+      font-weight: 700;
+      font-size: 2rem;
+      &:hover{
+        color: $brandNameColor2;
       }
     }
     >button{

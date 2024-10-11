@@ -26,7 +26,7 @@ const Header = ( { user }: HeaderPropsType ) => {
 
     return (
         <nav className="header">
-            <Link onClick={()=>{setIsOpen(false)}} to ="/">HOME</Link>
+            <Link className="brandName" onClick={()=>{setIsOpen(false)}} to ="/">ShopSphere</Link>
             <Link onClick={()=>{setIsOpen(false)}} to ="/search"><FaSearch/></Link>
             <Link onClick={()=>{setIsOpen(false)}} to ="/cart"><FaShoppingBag/></Link>
             {user?._id? (
