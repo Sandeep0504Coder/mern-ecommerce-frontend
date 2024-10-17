@@ -2,11 +2,10 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { useDeleteProductMutation, useProductDetailsQuery, useUpdateProductMutation } from "../../../redux/api/productAPI";
-import { UserReducerInitialState } from "../../../types/reducer.types";
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { ProductUpdateFormData } from "../../../types/types";
-import { server } from "../../../redux/store";
+import { RootState, server } from "../../../redux/store";
 import { Skeleton } from "../../../components/Loader";
 import { responseToast } from "../../../utils/features";
 
@@ -14,18 +13,19 @@ const Productmanagement = () => {
   const navigate = useNavigate();
   const [ updateProduct ] = useUpdateProductMutation();
   const [ deleteProduct ] = useDeleteProductMutation();
-  const { user } = useSelector( ( state: { userReducer: UserReducerInitialState } ) => state.userReducer );
+  const { user } = useSelector( ( state: RootState ) => state.userReducer );
 
   const params = useParams();
 
   const { data, isLoading, isError } = useProductDetailsQuery( params.id! );
 
-  const { price, photo, name, stock, category } = data?.product || {
+  const { price, photo, name, stock, category, description } = data?.product || {
     price: 0,
     photo: "",
     name: "",
     stock: 0,
     category: "",
+    description: ""
   };
 
   const [ productUpdate, setProductUpdate ] = useState<ProductUpdateFormData>( {
@@ -33,11 +33,12 @@ const Productmanagement = () => {
     stockUpdate: stock,
     nameUpdate: name,
     categoryUpdate: category,
+    descriptionUpdate: description,
     photoUpdate: photo,
     photoFile: undefined
   } );
 
-  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, photoUpdate, photoFile } = productUpdate;
+  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, descriptionUpdate, photoUpdate, photoFile } = productUpdate;
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file: File | undefined = e.target.files?.[0];
@@ -67,6 +68,7 @@ const Productmanagement = () => {
     if(photoFile) formData.set( "photo", photoFile as File );
     if(nameUpdate) formData.set( "name", nameUpdate );
     if(categoryUpdate) formData.set( "category", categoryUpdate );
+    if( descriptionUpdate ) formData.set( "description", descriptionUpdate );
     if(stockUpdate !== undefined) formData.set( "stock", stockUpdate.toString( ) );
 
     const res = await updateProduct( {
@@ -78,7 +80,7 @@ const Productmanagement = () => {
     responseToast( res, navigate, "/admin/product" );
   };
 
-  const changeInputHandler = ( e: ChangeEvent<HTMLInputElement> ) => {
+  const changeInputHandler = ( e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => {
     setProductUpdate( ( prevState ) => ( {
       ...prevState,
       [ e.target.name ]: e.target.value,
@@ -101,6 +103,7 @@ const Productmanagement = () => {
         stockUpdate: data?.product.stock!,
         nameUpdate: data?.product.name!,
         categoryUpdate: data?.product.category!,
+        descriptionUpdate: data?.product.description!,
         photoUpdate: "",
         photoFile: undefined,
       } )
@@ -173,7 +176,15 @@ const Productmanagement = () => {
                     onChange={changeInputHandler}
                   />
                 </div>
-
+                <div>
+                  <label>Description</label>
+                  <textarea
+                    placeholder="Write product description here"
+                    value={descriptionUpdate}
+                    name="descriptionUpdate"
+                    onChange={changeInputHandler}
+                  />
+                </div>
                 <div>
                   <label>Photo</label>
                   <input type="file" onChange={changeImageHandler} />

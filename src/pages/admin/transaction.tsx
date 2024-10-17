@@ -4,11 +4,11 @@ import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
 import { useSelector } from "react-redux";
-import { UserReducerInitialState } from "../../types/reducer.types";
 import { useAllOrdersQuery } from "../../redux/api/orderAPI";
 import toast from "react-hot-toast";
 import { CustomError } from "../../types/api.types";
 import { Skeleton } from "../../components/Loader";
+import { RootState } from "../../redux/store";
 
 interface DataType {
   user: string;
@@ -47,7 +47,7 @@ const columns: Column<DataType>[] = [
 ];
 
 const Transaction = () => {
-  const { user } = useSelector( ( state: { userReducer: UserReducerInitialState } ) => ( state.userReducer ) );
+  const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
 
   const { data, isLoading, isError, error } = useAllOrdersQuery( user?._id! );
 

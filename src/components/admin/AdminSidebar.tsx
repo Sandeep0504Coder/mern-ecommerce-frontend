@@ -101,6 +101,12 @@ const DivOne = ({ location }: { location: Location }) => (
         Icon={AiFillFileText}
         location={location}
       />
+       <Li
+        url="/admin/coupon"
+        text="Coupon"
+        Icon={RiCoupon3Fill}
+        location={location}
+      />
     </ul>
   </div>
 );
@@ -139,12 +145,6 @@ const DivThree = ({ location }: { location: Location }) => (
         url="/admin/app/stopwatch"
         text="Stopwatch"
         Icon={FaStopwatch}
-        location={location}
-      />
-      <Li
-        url="/admin/app/coupon"
-        text="Coupon"
-        Icon={RiCoupon3Fill}
         location={location}
       />
       <Li

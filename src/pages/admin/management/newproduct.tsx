@@ -2,20 +2,21 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { useCreateProductMutation } from "../../../redux/api/productAPI";
 import { useSelector } from "react-redux";
-import { UserReducerInitialState } from "../../../types/reducer.types";
 import { responseToast } from "../../../utils/features";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../../../redux/store";
 
 const NewProduct = () => {
   const [name, setName] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [price, setPrice] = useState<number>(1000);
   const [stock, setStock] = useState<number>(1);
+  const [ description, setDescription ] = useState<string>( "" );
   const [photoPrev, setPhotoPrev] = useState<string>("");
   const [photo, setPhoto] = useState<File>();
   const [ createProduct ] = useCreateProductMutation();
   const navigate = useNavigate();
-  const { user } = useSelector( ( state: { userReducer: UserReducerInitialState } ) => state.userReducer );
+  const { user } = useSelector( ( state: RootState ) => state.userReducer );
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const file: File | undefined = e.target.files?.[0];
@@ -47,6 +48,7 @@ const NewProduct = () => {
     formData.set( "stock", stock.toString() );
     formData.set( "photo", photo );
     formData.set( "category", category );
+    formData.set( "description", description );
     
 
     const res = await createProduct( {
@@ -103,6 +105,15 @@ const NewProduct = () => {
                 required
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label>Description</label>
+              <textarea
+                placeholder="Write product description here"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 

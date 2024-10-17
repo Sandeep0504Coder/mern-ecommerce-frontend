@@ -4,37 +4,29 @@ import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
-import { useAllProductsQuery } from "../../redux/api/productAPI";
-import { RootState, server } from "../../redux/store";
+import { RootState } from "../../redux/store";
 import toast from "react-hot-toast";
 import { CustomError } from "../../types/api.types";
 import { useSelector } from "react-redux";
 import { Skeleton } from "../../components/Loader";
+import { useAllCouponsQuery, useDeleteCouponMutation } from "../../redux/api/couponAPI";
+import { FaTrashCan } from "react-icons/fa6";
+import { responseToast } from "../../utils/features";
 
 interface DataType {
-  photo: ReactElement;
-  name: string;
-  price: number;
-  stock: number;
+  code: string;
+  amount: number;
   action: ReactElement;
 }
 
 const columns: Column<DataType>[] = [
   {
-    Header: "Photo",
-    accessor: "photo",
+    Header: "Code",
+    accessor: "code",
   },
   {
-    Header: "Name",
-    accessor: "name",
-  },
-  {
-    Header: "Price",
-    accessor: "price",
-  },
-  {
-    Header: "Stock",
-    accessor: "stock",
+    Header: "Amount",
+    accessor: "amount",
   },
   {
     Header: "Action",
@@ -42,24 +34,33 @@ const columns: Column<DataType>[] = [
   },
 ];
 
-const Products = () => {
+const Coupons = () => {
   const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
+  const [ deleteCoupon ] = useDeleteCouponMutation( );
 
-  const { data, isLoading, isError, error } = useAllProductsQuery( user?._id! );
+  const { data, isLoading, isError, error } = useAllCouponsQuery( user?._id! );
 
   const [rows, setRows] = useState<DataType[]>( [] );
 
   if( isError ) toast.error( ( error as CustomError ).data.message )
   
+
+    const deleteCouponHandler = async( couponId: string ) => {
+        const res = await deleteCoupon( {
+          userId: user?._id!,
+          couponId: couponId
+        } );
+    
+        responseToast( res, null, "" );
+    }
+
   useEffect( () => {
     if( data )
       setRows(
-        data.products.map( ( product ) => ( {
-          name: product.name,
-          price: product.price,
-          stock: product.stock,
-          action: <Link to={`/admin/product/${product._id}`}>Manage</Link>,
-          photo: <img src={`${server}/${product.photo}`} alt={product.name} />
+        data.coupons.map( ( coupon ) => ( {
+          code: coupon.code,
+          amount: coupon.amount,
+          action: <button onClick={ ( ) => { deleteCouponHandler( coupon._id ) } }><FaTrashCan/></button>
         } ) )
       );
   }, [data] );
@@ -68,8 +69,8 @@ const Products = () => {
   const Table = TableHOC<DataType>(
     columns,
     rows,
-    "dashboard-product-box",
-    "Products",
+    "dashboard-coupon-box",
+    "Coupons",
     rows.length > 6
   )();
 
@@ -77,11 +78,11 @@ const Products = () => {
     <div className="admin-container">
       <AdminSidebar />
       <main>{isLoading ? <Skeleton length={20}/> : Table}</main>
-      <Link to="/admin/product/new" className="create-product-btn">
+      <Link to="/admin/coupon/new" className="create-coupon-btn">
         <FaPlus />
       </Link>
     </div>
   );
 };
 
-export default Products;
+export default Coupons;

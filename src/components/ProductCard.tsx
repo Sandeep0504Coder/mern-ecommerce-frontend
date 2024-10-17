@@ -1,6 +1,8 @@
 import { FaPlus } from "react-icons/fa";
 import { server } from "../redux/store";
 import { CartItemType } from "../types/types";
+import { GrView } from "react-icons/gr";
+import { Link } from "react-router-dom";
 
 type ProductProps = {
   productId: string;
@@ -18,6 +20,11 @@ const ProductCard = ({productId, photo, name,price,stock,handler}:ProductProps) 
       <p>{name}</p>
       <span>${price}</span>
       <div>
+        <Link to={`/productDetails/${productId}`}>
+        <button>
+          <GrView/>
+        </button>
+        </Link>
         <button onClick={()=>handler({
           productId,
           photo,

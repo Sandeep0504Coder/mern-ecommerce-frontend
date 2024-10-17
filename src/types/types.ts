@@ -15,6 +15,13 @@ export type Product = {
     price: number;
     stock: number;
     _id: string;
+    description?: string;
+}
+
+export type Coupon = {
+    _id: string;
+    code: string;
+    amount: number;
 }
 
 export type ShippingInfo = {
@@ -45,6 +52,7 @@ export interface ProductUpdateFormData {
     priceUpdate: number;
     stockUpdate: number;
     photoFile: File | undefined;
+    descriptionUpdate?: string;
 }
 
 export type OrderType = {

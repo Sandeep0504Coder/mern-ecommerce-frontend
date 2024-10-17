@@ -3,11 +3,14 @@ import { useState } from "react"
 import toast from "react-hot-toast"
 import { FcGoogle } from "react-icons/fc"
 import { auth } from "../firebase"
-import { useLoginMutation } from "../redux/api/userAPI"
+import { getUser, useLoginMutation } from "../redux/api/userAPI"
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react"
 import { MessageResponse } from "../types/api.types"
+import { useDispatch } from "react-redux"
+import { userExist, userNotExist } from "../redux/reducer/userReducer"
 
 const Login = () => {
+    const dispatch = useDispatch( );
     const [gender, setGender] = useState<string>("")
     const [date, setDate] = useState<string>("")
 
@@ -29,8 +32,11 @@ const Login = () => {
             } );
 
             if( "data" in res && typeof res.data !== "undefined" ){
+                const data = await getUser( user.uid );
+                dispatch( userExist( data.user ) );
                 toast.success( res.data.message );
             } else {
+                dispatch( userNotExist( ) );
                 const error = res.error as FetchBaseQueryError;
                 const message = ( error.data as MessageResponse ).message;
                 toast.error( message );

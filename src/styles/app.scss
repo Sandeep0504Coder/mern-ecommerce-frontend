@@ -57,6 +57,17 @@
       margin: 1rem 0;
       text-align: left;
     }
+
+    .addToCartButton{
+      @include baseBtn( 1rem, $color3, $color1 );
+        width: 100%;
+        font-size: 1.1rem;
+        background-color: rgb(247, 81, 10);
+        color: white;
+        &:hover {
+          opacity: 0.8;
+        }
+    }
   }
 
   .heading{

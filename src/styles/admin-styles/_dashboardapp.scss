@@ -59,7 +59,7 @@
       }
     }
 
-    .coupon-form {
+    .coupon-form, .create-coupon-form {
       @include grid(2fr 1fr, 2rem);
       max-width: 30rem;
       width: 100%;

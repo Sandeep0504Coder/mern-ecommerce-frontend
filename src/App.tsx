@@ -8,8 +8,8 @@ import { auth } from './firebase'
 import { userExist, userNotExist } from './redux/reducer/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './redux/api/userAPI'
-import { UserReducerInitialState } from './types/reducer.types'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { RootState } from './redux/store'
 
 const Home = lazy( ( ) => import( "./pages/Home" ) )
 const Cart = lazy( ( ) => import( "./pages/Cart" ) )
@@ -19,16 +19,18 @@ const Shipping = lazy( ( ) => import( './pages/Shipping' ) )
 const Checkout = lazy( ( ) => import( './pages/Checkout' ) )
 const Orders = lazy( ( ) => import( './pages/Orders' ) )
 const OrderDetails = lazy( ( ) => import( './pages/OrderDetails' ) )
+const ProductDetails = lazy( ( ) => import( './pages/ProductDetails' ) )
 const PageNotFound = lazy( ( ) => import( './pages/PageNotFound' ) )
 //Admin Routes importing
 const Dashboard = lazy(() => import("./pages/admin/dashboard"));
 const Products = lazy(() => import("./pages/admin/products"));
 const Customers = lazy(() => import("./pages/admin/customers"));
 const Transaction = lazy(() => import("./pages/admin/transaction"));
+const Coupons = lazy(() => import("./pages/admin/Coupons"));
 const Barcharts = lazy(() => import("./pages/admin/charts/barcharts"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));
 const Linecharts = lazy(() => import("./pages/admin/charts/linecharts"));
-const Coupon = lazy(() => import("./pages/admin/apps/coupon"));
+const NewCoupon = lazy(() => import("./pages/admin/management/NewCoupon"));
 const Stopwatch = lazy(() => import("./pages/admin/apps/stopwatch"));
 const Toss = lazy(() => import("./pages/admin/apps/toss"));
 const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
@@ -58,7 +60,7 @@ const App = () => {
   } )
   }, [ ] );
   
-  const { user, loading } = useSelector( ( state: { userReducer: UserReducerInitialState } ) => ( state.userReducer ) )
+  const { user, loading } = useSelector( ( state: RootState ) => ( state.userReducer ) )
 
   return loading ? <Loader/> : (
     <Router>
@@ -80,6 +82,7 @@ const App = () => {
             <Route path='/shipping' element={<Shipping/>}/>
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/orderDetails/:id' element={<OrderDetails/>}/>
+            <Route path='/productDetails/:id' element={<ProductDetails/>}/>
             <Route path='/pay' element={<Checkout/>}/>
           </Route>
           
@@ -97,16 +100,17 @@ const App = () => {
             <Route path="/admin/product" element={<Products />} />
             <Route path="/admin/customer" element={<Customers />} />
             <Route path="/admin/transaction" element={<Transaction />} />
+            <Route path="admin/coupon" element={<Coupons/>} />
             {/* Charts */}
             <Route path="/admin/chart/bar" element={<Barcharts />} />
             <Route path="/admin/chart/pie" element={<Piecharts />} />
             <Route path="/admin/chart/line" element={<Linecharts />} />
             {/* Apps */}
-            <Route path="/admin/app/coupon" element={<Coupon />} />
             <Route path="/admin/app/stopwatch" element={<Stopwatch />} />
             <Route path="/admin/app/toss" element={<Toss />} />
 
             {/* Management */}
+            <Route path="/admin/coupon/new" element={<NewCoupon />} />
             <Route path="/admin/product/new" element={<NewProduct />} />
 
             <Route path="/admin/product/:id" element={<ProductManagement />} />

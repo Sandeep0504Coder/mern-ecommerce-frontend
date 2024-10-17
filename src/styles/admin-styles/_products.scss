@@ -1,14 +1,14 @@
-.dashboard-product-box {
+.dashboard-product-box, .dashboard-coupon-box {
   background-color: white;
   padding: 2rem;
   overflow: auto;
   @include square(100%);
 }
 
-.create-product-btn {
+.create-product-btn, .create-coupon-btn {
   position: fixed;
   right: 2rem;
-  top: 2rem;
+  top: 4rem;
   @include square(2.5rem);
   @include flex(row, center, center, 0);
   border-radius: 50%;
@@ -120,6 +120,16 @@
           );
           border-radius: 5px;
         }
+
+        >textarea{
+          @include inputStyle(
+            100%,
+            1rem,
+            unset,
+            1px solid rgba(13, 13, 13, 0.196)
+          );
+          border-radius: 5px;
+        }
       }
 
       > button {
@@ -131,6 +141,15 @@
         border-radius: 5px;
         font-size: 1.1rem;
         cursor: pointer;
+      }
+    }
+
+    .product-description{
+      display: flex;
+      flex-direction: row;
+      margin-top: 1rem;
+      >h4{
+        padding-right: 1rem;
       }
     }
   }

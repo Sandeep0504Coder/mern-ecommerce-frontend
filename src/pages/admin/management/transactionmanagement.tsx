@@ -1,12 +1,11 @@
 import { FaTrash } from "react-icons/fa";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-import { server } from "../../../redux/store";
+import { RootState, server } from "../../../redux/store";
 import { useDeleteOrderMutation, useOrderDetailsQuery, useUpdateOrderMutation } from "../../../redux/api/orderAPI";
 import { OrderItemType, OrderType } from "../../../types/types";
 import { Skeleton } from "../../../components/Loader";
 import { useSelector } from "react-redux";
-import { UserReducerInitialState } from "../../../types/reducer.types";
 import { responseToast } from "../../../utils/features";
 
 const defaultData: OrderType = {
@@ -34,7 +33,7 @@ const defaultData: OrderType = {
 const TransactionManagement = () => {
   const params = useParams( );
   const navigate = useNavigate( );
-  const { user } = useSelector( ( state: { userReducer: UserReducerInitialState } ) => ( state.userReducer ) );
+  const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
   const [ updateOrder ] = useUpdateOrderMutation( );
   const [ deleteOrder ] = useDeleteOrderMutation( );
   const { data, isLoading, isError } = useOrderDetailsQuery( params.id! );

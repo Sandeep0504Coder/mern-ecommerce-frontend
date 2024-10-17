@@ -1,4 +1,4 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon } from "./types";
 
 export interface MessageResponse{
     success: boolean;
@@ -40,6 +40,40 @@ export interface SearchProductResponse extends ProductResponse{
 export interface ProductDetailsResponse{
     success: boolean;
     product: Product;
+}
+
+export interface AllOrdersResponse{
+    success: boolean;
+    orders: OrderType[];
+}
+
+export interface OrderDetailsResponse{
+    success: boolean;
+    order: OrderType;
+}
+
+export type StatsResponse = {
+    success: boolean;
+    stats: Stats;
+}
+
+export type PieResponse = {
+    success: boolean;
+    charts: Pie;
+}
+
+export type LineChartsResponse = {
+    success: boolean;
+    charts: Line;
+}
+
+export type BarResponse = {
+    success: boolean;
+    charts: Bar;
+}
+export interface CouponResonse{
+    success: boolean;
+    coupons: Coupon[];
 }
 
 export interface SearchProductRequest{
@@ -85,32 +119,12 @@ export interface UpdateOrderRequest{
     orderId: string;
 }
 
-export interface AllOrdersResponse{
-    success: boolean;
-    orders: OrderType[];
+export interface CreateCouponRequest{
+    id: string;
+    formData: FormData;
 }
 
-export interface OrderDetailsResponse{
-    success: boolean;
-    order: OrderType;
-}
-
-export type StatsResponse = {
-    success: boolean;
-    stats: Stats;
-}
-
-export type PieResponse = {
-    success: boolean;
-    charts: Pie;
-}
-
-export type LineChartsResponse = {
-    success: boolean;
-    charts: Line;
-}
-
-export type BarResponse = {
-    success: boolean;
-    charts: Bar;
+export interface DeleteCouponRequest{
+    userId: string;
+    couponId: string;
 }

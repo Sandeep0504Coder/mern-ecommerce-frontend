@@ -1,5 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
+import { useCreateCouponMutation } from "../../../redux/api/couponAPI";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { responseToast } from "../../../utils/features";
+import { useNavigate } from "react-router-dom";
 
 const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const allNumbers = "1234567890";
@@ -8,12 +13,20 @@ const allSymbols = "!@#$%^&*()_+";
 const Coupon = () => {
   const [size, setSize] = useState<number>(8);
   const [prefix, setPrefix] = useState<string>("");
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [discountAmount, setDiscountAmount] = useState<number>(100);
   const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
   const [includeCharacters, setIncludeCharacters] = useState<boolean>(false);
   const [includeSymbols, setIncludeSymbols] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const [coupon, setCoupon] = useState<string>("");
+
+  const [ createCoupon ] = useCreateCouponMutation();
+
+  const navigate = useNavigate();
+
+  const { user } = useSelector( ( state: RootState ) => state.userReducer );
 
   const copyText = async (coupon: string) => {
     await window.navigator.clipboard.writeText(coupon);
@@ -42,6 +55,26 @@ const Coupon = () => {
     setCoupon(result);
   };
 
+  const createNewCouponHandler = async( e: FormEvent<HTMLFormElement> ) => {
+    e.preventDefault( );
+
+    if( !couponCode || !discountAmount ){
+      return;
+    }
+
+    const formData = new FormData( );
+
+    formData.set( "coupon", couponCode );
+    formData.set( "amount", discountAmount.toString() );
+
+    const res = await createCoupon( {
+      id: user?._id!,
+      formData
+    } );
+
+    responseToast( res, navigate, "/admin/coupon" );
+  }
+
   useEffect(() => {
     setIsCopied(false);
   }, [coupon]);
@@ -52,6 +85,7 @@ const Coupon = () => {
       <main className="dashboard-app-container">
         <h1>Coupon</h1>
         <section>
+          <h3>Genarate Coupon Code</h3>
           <form className="coupon-form" onSubmit={submitHandler}>
             <input
               type="text"
@@ -105,6 +139,25 @@ const Coupon = () => {
               </span>{" "}
             </code>
           )}
+          <h3>Create Coupon</h3>
+          <form className="create-coupon-form" onSubmit={createNewCouponHandler}>
+            <input
+              type="text"
+              placeholder="Coupon code"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+              required
+            />
+
+            <input
+              type="number"
+              placeholder="Discount amount"
+              value={discountAmount}
+              onChange={(e) => setDiscountAmount(Number(e.target.value))}
+              required
+            />
+            <button type="submit">Create</button>
+          </form>
         </section>
       </main>
     </div>
