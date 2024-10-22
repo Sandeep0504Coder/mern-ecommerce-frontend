@@ -79,7 +79,7 @@ const TransactionManagement = () => {
               <ProductCard
                 key={i._id}
                 name={i.name}
-                photo={`${server}/${i.photo}`}
+                photo={i.photo}
                 productId={i.productId}
                 _id={i._id}
                 quantity={i.quantity}
@@ -139,7 +139,7 @@ const ProductCard = ({
 }:OrderItemType) => (
   <div className="transaction-product-card">
     <img src={photo} alt={name} />
-    <Link to={`/product/${productId}`}>{name}</Link>
+    <Link to={`/productDetails/${productId}`}>{name}</Link>
     <span>
       ₹{price} X {quantity} = ₹{price * quantity}
     </span>

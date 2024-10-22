@@ -1,33 +1,33 @@
 import { FaPlus } from "react-icons/fa";
-import { server } from "../redux/store";
 import { CartItemType } from "../types/types";
 import { GrView } from "react-icons/gr";
 import { Link } from "react-router-dom";
 
 type ProductProps = {
   productId: string;
-  photo: string;
+  photos: {
+    url: string;
+    public_id: string;
+  }[];
   name: string;
   price: number;
   stock: number;
   handler: (cartItem: CartItemType) => string | undefined;
 }
 
-const ProductCard = ({productId, photo, name,price,stock,handler}:ProductProps) => {
+const ProductCard = ({productId, photos, name,price,stock,handler}:ProductProps) => {
   return (
     <div className="product-card">
-      <img src={`${server}/${photo}`} alt={name} />
+      <img src={photos?.[0]?.url} alt={name} />
       <p>{name}</p>
       <span>${price}</span>
       <div>
         <Link to={`/productDetails/${productId}`}>
-        <button>
           <GrView/>
-        </button>
         </Link>
         <button onClick={()=>handler({
           productId,
-          photo,
+          photo: photos[0].url,
           name,
           price,
           stock,

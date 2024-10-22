@@ -82,7 +82,7 @@ const Search = () => {
                 name={product.name}
                 stock={product.stock}
                 handler={addToCartHandler}
-                photo={product.photo}
+                photos={product.photos}
               />
             ) ) }
           </div>

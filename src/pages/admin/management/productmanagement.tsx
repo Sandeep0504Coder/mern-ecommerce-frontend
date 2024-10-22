@@ -5,9 +5,10 @@ import { useDeleteProductMutation, useProductDetailsQuery, useUpdateProductMutat
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { ProductUpdateFormData } from "../../../types/types";
-import { RootState, server } from "../../../redux/store";
+import { RootState } from "../../../redux/store";
 import { Skeleton } from "../../../components/Loader";
 import { responseToast } from "../../../utils/features";
+import { useFileHandler } from "6pp";
 
 const Productmanagement = () => {
   const navigate = useNavigate();
@@ -19,65 +20,59 @@ const Productmanagement = () => {
 
   const { data, isLoading, isError } = useProductDetailsQuery( params.id! );
 
-  const { price, photo, name, stock, category, description } = data?.product || {
+  const { price, photos, name, stock, category, description } = data?.product || {
     price: 0,
-    photo: "",
+    photos: [],
     name: "",
     stock: 0,
     category: "",
     description: ""
   };
 
+  const [ btnLoading, setBtnLoading ] = useState<boolean>( false );
   const [ productUpdate, setProductUpdate ] = useState<ProductUpdateFormData>( {
     priceUpdate: price,
     stockUpdate: stock,
     nameUpdate: name,
     categoryUpdate: category,
-    descriptionUpdate: description,
-    photoUpdate: photo,
-    photoFile: undefined
+    descriptionUpdate: description
   } );
 
-  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, descriptionUpdate, photoUpdate, photoFile } = productUpdate;
+  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, descriptionUpdate } = productUpdate;
 
-  const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file: File | undefined = e.target.files?.[0];
-
-    const reader: FileReader = new FileReader();
-
-    if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setProductUpdate( ( prevState ) => ( {
-            ...prevState,
-            photoUpdate: reader.result as string,
-            photoFile: file,
-          } ) );
-        }
-      };
-    }
-  };
+  const photosFile = useFileHandler( "multiple", 10, 5 );
 
   const submitHandler = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setBtnLoading( true );
+    
+    try{
+      const formData = new FormData( );
 
-    const formData = new FormData( );
+      if(priceUpdate) formData.set( "price", priceUpdate.toString( ) );
+      if(nameUpdate) formData.set( "name", nameUpdate );
+      if(categoryUpdate) formData.set( "category", categoryUpdate );
+      if( descriptionUpdate ) formData.set( "description", descriptionUpdate );
+      if(stockUpdate !== undefined) formData.set( "stock", stockUpdate.toString( ) );
 
-    if(priceUpdate) formData.set( "price", priceUpdate.toString( ) );
-    if(photoFile) formData.set( "photo", photoFile as File );
-    if(nameUpdate) formData.set( "name", nameUpdate );
-    if(categoryUpdate) formData.set( "category", categoryUpdate );
-    if( descriptionUpdate ) formData.set( "description", descriptionUpdate );
-    if(stockUpdate !== undefined) formData.set( "stock", stockUpdate.toString( ) );
+      if( photosFile.file && photosFile.file.length > 0 ){
+        photosFile.file.forEach( ( file )  => {
+          formData.append( "photos", file );
+        } )
+      }
 
-    const res = await updateProduct( {
-      id: user?._id!,
-      productId: data?.product._id!,
-      formData
-    } );
+      const res = await updateProduct( {
+        id: user?._id!,
+        productId: data?.product._id!,
+        formData
+      } );
 
-    responseToast( res, navigate, "/admin/product" );
+      responseToast( res, navigate, "/admin/product" );
+    } catch( error ){
+      console.log( error );
+    } finally {
+      setBtnLoading( false );
+    }
   };
 
   const changeInputHandler = ( e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => {
@@ -103,9 +98,7 @@ const Productmanagement = () => {
         stockUpdate: data?.product.stock!,
         nameUpdate: data?.product.name!,
         categoryUpdate: data?.product.category!,
-        descriptionUpdate: data?.product.description!,
-        photoUpdate: "",
-        photoFile: undefined,
+        descriptionUpdate: data?.product.description!
       } )
     }
   }, [ data ] );
@@ -120,7 +113,7 @@ const Productmanagement = () => {
           <>
             <section>
               <strong>{`ID - ${data?.product._id}`}</strong>
-              <img src={`${server}/${photo}`} alt="Product" />
+              <img src={photos?.[0]?.url} alt="Product" />
               <p>{name}</p>
               {stock > 0 ? (
                 <span className="green">{stock} Available</span>
@@ -186,12 +179,17 @@ const Productmanagement = () => {
                   />
                 </div>
                 <div>
-                  <label>Photo</label>
-                  <input type="file" onChange={changeImageHandler} />
+                  <label>Photos</label>
+                  <input type="file" accept="images/*" multiple onChange={photosFile.changeHandler} />
                 </div>
-
-                {photoUpdate && <img src={photoUpdate} alt="New Image" />}
-                <button type="submit">Update</button>
+                {photosFile.error && <p>{photosFile.error}</p>}
+                {
+                  photosFile.preview &&
+                    <div style={{display: "flex", gap: "1rem", overflowX: "auto"}}>
+                      {photosFile.preview.map( ( img, i ) => ( <img style={{width: 100, height: 100, objectFit: "cover"}} key={i} src={img} alt="New Image"/> ) )}
+                    </div>
+                }
+                <button disabled={btnLoading} type="submit">Update</button>
               </form>
             </article>
           </>

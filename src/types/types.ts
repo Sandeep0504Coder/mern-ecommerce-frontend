@@ -10,12 +10,15 @@ export interface User {
 
 export type Product = {
     name: string;
-    photo: string;
+    photos: {
+        public_id: string;
+        url: string;
+    }[];
     category: string;
     price: number;
     stock: number;
     _id: string;
-    description?: string;
+    description: string;
 }
 
 export type Coupon = {
@@ -47,12 +50,10 @@ export type OrderItemType = Omit<CartItemType, "stock"> & {
 
 export interface ProductUpdateFormData {
     nameUpdate: string;
-    photoUpdate: string;
     categoryUpdate: string;
     priceUpdate: number;
     stockUpdate: number;
-    photoFile: File | undefined;
-    descriptionUpdate?: string;
+    descriptionUpdate: string;
 }
 
 export type OrderType = {

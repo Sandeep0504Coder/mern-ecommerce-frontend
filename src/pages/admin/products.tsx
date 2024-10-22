@@ -5,7 +5,7 @@ import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
 import { useAllProductsQuery } from "../../redux/api/productAPI";
-import { RootState, server } from "../../redux/store";
+import { RootState } from "../../redux/store";
 import toast from "react-hot-toast";
 import { CustomError } from "../../types/api.types";
 import { useSelector } from "react-redux";
@@ -59,7 +59,7 @@ const Products = () => {
           price: product.price,
           stock: product.stock,
           action: <Link to={`/admin/product/${product._id}`}>Manage</Link>,
-          photo: <img src={`${server}/${product.photo}`} alt={product.name} />
+          photo: <img src={product.photos?.[0]?.url} alt={product.name} />
         } ) )
       );
   }, [data] );

@@ -1,5 +1,4 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { server } from "../redux/store";
 import {  useOrderDetailsQuery } from "../redux/api/orderAPI";
 import { OrderItemType, OrderType } from "../types/types";
 import { Skeleton } from "../components/Loader";
@@ -59,7 +58,7 @@ const OrderDetails = () => {
               <ProductCard
                 key={i._id}
                 name={i.name}
-                photo={`${server}/${i.photo}`}
+                photo={i.photo}
                 productId={i.productId}
                 _id={i._id}
                 quantity={i.quantity}

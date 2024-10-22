@@ -63,7 +63,7 @@
         left: 0;
         background-color: #0000006b;
         @include flex;
-        button{
+        button, a{
             @include flex;
             @include square(3rem);
             border-radius:100%;
