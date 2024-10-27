@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CouponResonse, CreateCouponRequest, DeleteCouponRequest, MessageResponse } from "../../types/api.types";
+import { CouponDetailsRequest, CouponDetailsResonse, CouponResonse, CreateCouponRequest, DeleteCouponRequest, MessageResponse, UpdateCouponRequest } from "../../types/api.types";
 
 export const couponAPI = createApi( {
     reducerPath: "couponApi",
@@ -8,12 +8,22 @@ export const couponAPI = createApi( {
     endpoints: ( builder ) => ( {
         createCoupon: builder.mutation<MessageResponse, CreateCouponRequest>( {
             query: ( { id, formData } ) => {
-                console.log(formData)
                 return{
                 url: `new?id=${id}`,
                 method: "POST",
                 body: {
                     coupon: formData.get( "coupon" ),
+                    amount: formData.get( "amount" ),
+                }
+            } },
+            invalidatesTags: [ "coupon" ]
+        } ),
+        updateCoupon:  builder.mutation<MessageResponse, UpdateCouponRequest>( {
+            query: ( { userId, couponId, formData } ) => {
+                return{
+                url: `${couponId}?id=${userId}`,
+                method: "PUT",
+                body: {
                     amount: formData.get( "amount" ),
                 }
             } },
@@ -30,11 +40,17 @@ export const couponAPI = createApi( {
             query: ( id ) => `all?id=${id}`,
             providesTags: [ "coupon" ]
         } ),
+        couponDetails: builder.query<CouponDetailsResonse, CouponDetailsRequest>( {
+            query: ( { userId, couponId } ) => `${couponId}?id=${userId}`,
+            providesTags: [ "coupon" ]
+        } ),
     } ),
 } );
 
 export const {
     useCreateCouponMutation,
+    useUpdateCouponMutation,
     useDeleteCouponMutation,
     useAllCouponsQuery,
+    useCouponDetailsQuery
 } = couponAPI;

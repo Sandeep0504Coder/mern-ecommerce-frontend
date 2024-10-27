@@ -19,7 +19,7 @@
     }
   }
 
-  .product-management {
+  .product-management, .coupon-management {
     padding: 2rem;
   }
 }
@@ -27,6 +27,43 @@
 @media screen and (width<= 1100px) {
   .admin-container {
     grid-template-columns: 1fr !important;
+  }
+
+  .product-details{
+    padding: 2rem;
+    >main{
+      >section{
+        &:first-of-type{
+          width: 100%;
+          height: 40vh;
+        }
+        &:last-of-type{
+          width: 100%;
+          min-height: 60vh;
+          padding: 1rem;
+          h1{
+            font-size: 2.5rem;
+            margin: 1rem 0;
+          }
+          code{
+            font-size: 1rem;
+            padding: 0.25rem 0.5rem;
+          }
+          article{
+            margin: 1rem 0;
+            >div{
+              button{
+                font-size: 1rem;
+              }
+            }
+            button{
+              padding: 0.5rem;
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -76,7 +113,23 @@
 }
 
 @media screen and (width<= 600px) {
-  .product-management {
+  .product-details{
+    >main{
+      flex-direction: column;
+      >section{
+        &:last-of-type{
+          flex-direction: column;
+          display: flex;
+          align-items: center;
+          article{
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+
+  .product-management, .coupon-management {
     flex-direction: column;
     align-items: center;
     padding: 0;

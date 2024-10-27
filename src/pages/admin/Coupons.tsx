@@ -9,9 +9,7 @@ import toast from "react-hot-toast";
 import { CustomError } from "../../types/api.types";
 import { useSelector } from "react-redux";
 import { Skeleton } from "../../components/Loader";
-import { useAllCouponsQuery, useDeleteCouponMutation } from "../../redux/api/couponAPI";
-import { FaTrashCan } from "react-icons/fa6";
-import { responseToast } from "../../utils/features";
+import { useAllCouponsQuery } from "../../redux/api/couponAPI";
 
 interface DataType {
   code: string;
@@ -36,23 +34,12 @@ const columns: Column<DataType>[] = [
 
 const Coupons = () => {
   const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
-  const [ deleteCoupon ] = useDeleteCouponMutation( );
 
   const { data, isLoading, isError, error } = useAllCouponsQuery( user?._id! );
 
   const [rows, setRows] = useState<DataType[]>( [] );
 
   if( isError ) toast.error( ( error as CustomError ).data.message )
-  
-
-    const deleteCouponHandler = async( couponId: string ) => {
-        const res = await deleteCoupon( {
-          userId: user?._id!,
-          couponId: couponId
-        } );
-    
-        responseToast( res, null, "" );
-    }
 
   useEffect( () => {
     if( data )
@@ -60,7 +47,7 @@ const Coupons = () => {
         data.coupons.map( ( coupon ) => ( {
           code: coupon.code,
           amount: coupon.amount,
-          action: <button onClick={ ( ) => { deleteCouponHandler( coupon._id ) } }><FaTrashCan/></button>
+          action: <Link to={`/admin/coupon/${coupon._id}`}>Manage</Link>
         } ) )
       );
   }, [data] );

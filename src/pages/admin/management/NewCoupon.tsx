@@ -82,10 +82,9 @@ const Coupon = () => {
   return (
     <div className="admin-container">
       <AdminSidebar />
-      <main className="dashboard-app-container">
-        <h1>Coupon</h1>
+      <main className="coupon-management">
         <section>
-          <h3>Genarate Coupon Code</h3>
+          <h2>Genarate Coupon Code</h2>
           <form className="coupon-form" onSubmit={submitHandler}>
             <input
               type="text"
@@ -139,26 +138,34 @@ const Coupon = () => {
               </span>{" "}
             </code>
           )}
-          <h3>Create Coupon</h3>
+        </section>
+        <article>
           <form className="create-coupon-form" onSubmit={createNewCouponHandler}>
-            <input
-              type="text"
-              placeholder="Coupon code"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
-              required
-            />
-
-            <input
-              type="number"
-              placeholder="Discount amount"
-              value={discountAmount}
-              onChange={(e) => setDiscountAmount(Number(e.target.value))}
-              required
-            />
+            <h2>Create Coupon</h2>
+            <div>
+              <label>Coupon Code</label>
+              <input
+                type="text"
+                placeholder="Coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label>Amount</label>
+              <input
+                type="number"
+                placeholder="Discount amount"
+                value={discountAmount}
+                onChange={(e) => setDiscountAmount(Number(e.target.value))}
+                required
+              />
+            </div>
+            
             <button type="submit">Create</button>
           </form>
-        </section>
+        </article>
       </main>
     </div>
   );

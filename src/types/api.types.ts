@@ -76,6 +76,11 @@ export interface CouponResonse{
     coupons: Coupon[];
 }
 
+export interface CouponDetailsResonse{
+    success: boolean;
+    coupon: Coupon;
+}
+
 export interface SearchProductRequest{
     price: number;
     page: number;
@@ -124,7 +129,18 @@ export interface CreateCouponRequest{
     formData: FormData;
 }
 
+export interface UpdateCouponRequest{
+    userId: string;
+    couponId: string;
+    formData: FormData;
+}
+
 export interface DeleteCouponRequest{
+    userId: string;
+    couponId: string;
+}
+
+export interface CouponDetailsRequest{
     userId: string;
     couponId: string;
 }
