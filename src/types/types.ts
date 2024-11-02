@@ -19,7 +19,21 @@ export type Product = {
     stock: number;
     _id: string;
     description: string;
+    ratings: number;
+    numOfReviews: number;
 }
+
+export type review = {
+    product: string;
+    user: {
+        name: string;
+        photo: string;
+        _id: string;
+    };
+    rating: number;
+    comment: string;
+    _id: string;
+};
 
 export type Coupon = {
     _id: string;

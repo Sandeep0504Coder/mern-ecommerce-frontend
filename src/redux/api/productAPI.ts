@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CreateProductRequest, DeleteProductRequest, MessageResponse, ProductCategoriesResponse, ProductDetailsResponse, ProductResponse, SearchProductRequest, SearchProductResponse, UpdateProductRequest } from "../../types/api.types";
+import { AddEditReviewRequest, AllReviewsResponse, CreateProductRequest, DeleteProductRequest, DeleteReviewRequest, MessageResponse, ProductCategoriesResponse, ProductDetailsResponse, ProductResponse, SearchProductRequest, SearchProductResponse, UpdateProductRequest } from "../../types/api.types";
 
 export const productAPI = createApi( {
     reducerPath: "productApi",
@@ -62,6 +62,25 @@ export const productAPI = createApi( {
             query: ( productId ) => productId,
             providesTags: [ "product" ],
         } ),
+        allReviewsOfProduct: builder.query<AllReviewsResponse, string>( {
+            query: ( productId ) => `reviews/${productId}`,
+            providesTags: [ "product" ],
+        } ),
+        addEditReview: builder.mutation<MessageResponse, AddEditReviewRequest>( {
+            query: ( { userId, productId, rating, comment } ) => ( {
+                url: `/review/new/${productId}?id=${userId}`,
+                method: "POST",
+                body: {rating, comment},
+            } ),
+            invalidatesTags: [ "product" ]
+        } ),
+        deleteReview: builder.mutation<MessageResponse, DeleteReviewRequest>( {
+            query: ( { userId, reviewId } ) => ( {
+                url: `/review/${reviewId}?id=${userId}`,
+                method: "DELETE",
+            } ),
+            invalidatesTags: [ "product" ]
+        } ),
     } ),
 } );
 
@@ -73,5 +92,8 @@ export const {
     useCreateProductMutation,
     useProductDetailsQuery,
     useUpdateProductMutation,
-    useDeleteProductMutation
+    useDeleteProductMutation,
+    useAllReviewsOfProductQuery,
+    useAddEditReviewMutation,
+    useDeleteReviewMutation
 } = productAPI;

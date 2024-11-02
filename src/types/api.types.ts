@@ -1,4 +1,4 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review } from "./types";
 
 export interface MessageResponse{
     success: boolean;
@@ -18,6 +18,11 @@ export interface AllUsersResponse{
 export interface ProductResponse{
     success: boolean;
     products: Product[];
+}
+
+export interface AllReviewsResponse{
+    success: boolean;
+    reviews: review[];
 }
 
 export interface ProductCategoriesResponse{
@@ -92,6 +97,18 @@ export interface SearchProductRequest{
 export interface CreateProductRequest{
     id: string;
     formData: FormData;
+}
+
+export interface AddEditReviewRequest{
+    userId?: string;
+    productId: string;
+    rating: number;
+    comment: string;
+}
+
+export interface DeleteReviewRequest{
+    userId?: string;
+    reviewId: string;
 }
 
 export interface UpdateProductRequest extends CreateProductRequest{
