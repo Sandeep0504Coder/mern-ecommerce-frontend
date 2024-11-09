@@ -21,6 +21,20 @@ export type Product = {
     description: string;
     ratings: number;
     numOfReviews: number;
+    suggestedItems: {
+        productId: {
+            _id: string;
+            price: number;
+            stock: number;
+            description: string;
+            name: string;
+            photos: {
+                public_id: string;
+                url: string;
+            }[];
+            category: string;
+        }
+    }[]
 }
 
 export type review = {

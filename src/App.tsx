@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getUser } from './redux/api/userAPI'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { RootState } from './redux/store'
+import Footer from './components/Footer'
 
 const Home = lazy( ( ) => import( "./pages/Home" ) )
 const Cart = lazy( ( ) => import( "./pages/Cart" ) )
@@ -36,6 +37,9 @@ const Toss = lazy(() => import("./pages/admin/apps/toss"));
 const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
 const ProductManagement = lazy(
   () => import("./pages/admin/management/productmanagement")
+);
+const ProductRecommendationManagement = lazy(
+  () => import("./pages/admin/management/ProductRecommendationManagement")
 );
 const CouponManagement = lazy(
   () => import("./pages/admin/management/CouponManagement")
@@ -118,12 +122,14 @@ const App = () => {
             <Route path="/admin/product/new" element={<NewProduct />} />
 
             <Route path="/admin/product/:id" element={<ProductManagement />} />
+            <Route path="/admin/product/recommendations/:id" element={<ProductRecommendationManagement />} />
 
             <Route path="/admin/transaction/:id" element={<TransactionManagement />} />
           </Route>
           <Route path="*" element={<PageNotFound/>}/>
         </Routes>
       </Suspense>
+      <Footer />
       <Toaster position="bottom-center"/>
     </Router>
   );

@@ -106,6 +106,12 @@ export interface AddEditReviewRequest{
     comment: string;
 }
 
+export interface ManageRecommendationsRequest{
+    userId: string;
+    productId: string;
+    suggestedProductIds: string;
+}
+
 export interface DeleteReviewRequest{
     userId?: string;
     reviewId: string;

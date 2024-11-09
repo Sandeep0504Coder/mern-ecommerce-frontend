@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AddEditReviewRequest, AllReviewsResponse, CreateProductRequest, DeleteProductRequest, DeleteReviewRequest, MessageResponse, ProductCategoriesResponse, ProductDetailsResponse, ProductResponse, SearchProductRequest, SearchProductResponse, UpdateProductRequest } from "../../types/api.types";
+import { AddEditReviewRequest, AllReviewsResponse, CreateProductRequest, DeleteProductRequest, DeleteReviewRequest, ManageRecommendationsRequest, MessageResponse, ProductCategoriesResponse, ProductDetailsResponse, ProductResponse, SearchProductRequest, SearchProductResponse, UpdateProductRequest } from "../../types/api.types";
 
 export const productAPI = createApi( {
     reducerPath: "productApi",
@@ -81,6 +81,18 @@ export const productAPI = createApi( {
             } ),
             invalidatesTags: [ "product" ]
         } ),
+        manageRecommendations: builder.mutation<MessageResponse, ManageRecommendationsRequest>( {
+            query: ( { userId, productId, suggestedProductIds } ) => {
+                return ( {
+                    url: `/manage-recommendations/${productId}?id=${userId}`,
+                    method: "PUT",
+                    body: {
+                        suggestedProductIds
+                    },
+                } );
+            },
+            invalidatesTags: [ "product" ]
+        } ),
     } ),
 } );
 
@@ -95,5 +107,6 @@ export const {
     useDeleteProductMutation,
     useAllReviewsOfProductQuery,
     useAddEditReviewMutation,
-    useDeleteReviewMutation
+    useDeleteReviewMutation,
+    useManageRecommendationsMutation
 } = productAPI;

@@ -25,6 +25,19 @@
 }
 
 @media screen and (width<= 1100px) {
+  .home {
+    > div {
+      flex-direction: column;
+      > aside {
+        width: 100%;
+        > ul {
+          flex-direction: row;
+          overflow: auto;
+        }
+      }
+    }
+  }
+  
   .admin-container {
     grid-template-columns: 1fr !important;
   }
@@ -68,6 +81,46 @@
 }
 
 @media screen and (width<= 768px) {
+  .our-clients {
+    padding: 2rem;
+  }
+
+  .our-services {
+    padding: 2rem;
+    > ul {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      > li {
+        > section {
+          > h3 {
+            font-size: 1.2rem;
+          }
+          > p {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+
+  .footer {
+    .footer-row {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .footer-col h4 {
+      &:after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .social-links {
+      align-items: center;
+    }
+  }
+
   .cart {
     display: block;
     padding: 2rem;

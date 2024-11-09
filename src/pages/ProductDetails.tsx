@@ -13,6 +13,7 @@ import { FiEdit } from "react-icons/fi";
 import { RootState } from "../redux/store";
 import { responseToast } from "../utils/features";
 import { FaRegStar, FaStar, FaTrash } from "react-icons/fa";
+import ProductCard from "../components/ProductCard";
 
 const ProductDetails = () => {
     const dispatch = useDispatch( );
@@ -44,7 +45,7 @@ const ProductDetails = () => {
         }
     } );
 
-    const { price, photos, name, stock, category, _id: productId, description, ratings, numOfReviews } = data?.product || {
+    const { price, photos, name, stock, category, _id: productId, description, ratings, numOfReviews, suggestedItems } = data?.product || {
         price: 0,
         photos: [],
         name: "",
@@ -53,9 +54,10 @@ const ProductDetails = () => {
         _id: "",
         description: "",
         ratings: 0,
-        numOfReviews: 0
+        numOfReviews: 0,
+        suggestedItems:[]
     };
-
+console.log( suggestedItems )
     const addToCartHandler = ( cartItem: CartItemType ) => {
         if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
         if( cartItem.stock < cartItem.quantity ) return toast.error( "Exceeds available Stock." );
@@ -181,14 +183,53 @@ const ProductDetails = () => {
                     </button>
                 </form>
             </dialog>
-
+            <section>
+                <article>
+                    <h2>Bought Together</h2>
+                </article>
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "2rem",
+                        overflowX: "auto",
+                        padding: "2rem",
+                    }}
+                >
+                    {
+                        isLoading ? (
+                            <>
+                                <Skeleton width="45rem" length={5}/>
+                                <Skeleton width="45rem" length={5}/>
+                                <Skeleton width="45rem" length={5}/>
+                            </>
+                        ) : (
+                            suggestedItems?.map( ( product ) => {
+                                    return (
+                                      <ProductCard
+                                        key={product.productId._id}
+                                        productId={product.productId._id}
+                                        price={product.productId.price}
+                                        name={product.productId.name}
+                                        stock={product.productId.stock}
+                                        photos={product.productId.photos}
+                                        handler={addToCartHandler}
+                                      />
+                                    )
+                                  } 
+                            )
+                        )
+                    }
+                </div>
+            </section>
             <section>
                 <article>
                     <h2>Reviews</h2>
-                    {reviewsResponse.isLoading ? null : (
-                        <button onClick={showReviewDialog}>
-                            <FiEdit/>
-                        </button>
+                    { ( reviewsResponse.isLoading ) ? null : (
+                        user && (
+                            <button onClick={showReviewDialog}>
+                                <FiEdit/>
+                            </button>
+                        )
                     ) }
                 </article>
                 <div

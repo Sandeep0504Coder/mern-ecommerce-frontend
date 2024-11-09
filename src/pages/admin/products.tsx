@@ -58,7 +58,10 @@ const Products = () => {
           name: product.name,
           price: product.price,
           stock: product.stock,
-          action: <Link to={`/admin/product/${product._id}`}>Manage</Link>,
+          action: <div style={{display: "flex",flexDirection:"row", gap:"4px", alignItems:"center"}}>
+            <Link to={`/admin/product/${product._id}`}>Manage</Link>
+            <Link to={`/admin/product/recommendations/${product._id}`}>Manage Recommendations</Link>
+          </div>,
           photo: <img src={product.photos?.[0]?.url} alt={product.name} />
         } ) )
       );
