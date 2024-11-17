@@ -85,6 +85,16 @@
     padding: 2rem;
   }
 
+  .home {
+    >main{
+      flex-wrap: nowrap;
+    }
+  }
+
+  .product-recommendation {
+    flex-wrap: nowrap;
+  }
+
   .our-services {
     padding: 2rem;
     > ul {

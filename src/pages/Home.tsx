@@ -148,9 +148,9 @@ const Home = () => {
           <aside>
             <h1>Categories</h1>
             <ul>
-              { categorieResponseLoading ? <Skeleton width="10vw" length={10}/> : categorieResponse?.categories.map((i) => (
-                <li key={i}>
-                  <Link to={`/search?category=${i.toLowerCase()}`}>{i}</Link>
+              { categorieResponseLoading ? <Skeleton width="10vw" length={10}/> : categorieResponse?.categories.map((category) => (
+                <li key={category}>
+                  <Link to={`/search?category=${category.toLowerCase()}`}>{category.toUpperCase( )}</Link>
                 </li>
               ))}
             </ul>
@@ -173,9 +173,9 @@ const Home = () => {
               <ProductCard
                 key={product._id}
                 productId={product._id}
-                price={product.price}
+                price={product.variants?.[0]?.price || product.price}
                 name={product.name}
-                stock={product.stock}
+                stock={product.variants?.[0]?.stock || product.stock}
                 photos={product.photos}
                 handler={addToCartHandler}
               />

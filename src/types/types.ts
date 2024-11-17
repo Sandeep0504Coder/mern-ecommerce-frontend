@@ -33,8 +33,10 @@ export type Product = {
                 url: string;
             }[];
             category: string;
+            variants: ProductVariantType[];
         }
-    }[]
+    }[],
+    variants: ProductVariantType[];
 }
 
 export type review = {
@@ -82,6 +84,7 @@ export interface ProductUpdateFormData {
     priceUpdate: number;
     stockUpdate: number;
     descriptionUpdate: string;
+    variantsUpdate: ProductVariantType[];
 }
 
 export type OrderType = {
@@ -170,4 +173,15 @@ export type Bar = {
     users: number[];
     products: number[];
     orders: number[];
+}
+
+export type ProductVariantType = {
+    configuration: Configuration[];
+    price: number;
+    stock: number;
+}
+
+export interface Configuration {
+    key: string;
+    value: string;
 }

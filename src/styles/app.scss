@@ -126,6 +126,7 @@
       >div{
         @include flex( column, flex-start,center,0.25rem );
       }
+      z-index: 1;
     }
   }
   
@@ -153,7 +154,7 @@
 
   .admin-container {
     @include grid(1fr 4fr, 2rem);
-    height: 100vh;
+    height: 100%;
     background-color: rgb(247, 247, 247);
     > aside {
       width: 100%;

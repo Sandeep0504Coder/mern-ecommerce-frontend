@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/reducer/cartReducer";
 import toast from "react-hot-toast";
 import { CartItemType, review } from "../types/types";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { MyntraCarousel, Slider, CarouselButtonType, useRating  } from "6pp";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import RatingsComponent from "../components/Ratings";
@@ -23,6 +23,7 @@ const ProductDetails = () => {
     const [ itemQuantity, setItemQuantity ] = useState<number>( 1 );
     const [ carouselOpen, setCarouselOpen ] = useState<boolean>( false );
     const [ reviewComment, setReviewComment ] = useState<string>( "" );
+    const [selectedConfig, setSelectedConfig] = useState<Record<string, string>>({});
     const reviewDialogRef = useRef<HTMLDialogElement>( null );
 
     const { data, isLoading, isError } = useProductDetailsQuery( params.id! );
@@ -45,7 +46,7 @@ const ProductDetails = () => {
         }
     } );
 
-    const { price, photos, name, stock, category, _id: productId, description, ratings, numOfReviews, suggestedItems } = data?.product || {
+    const { price, photos, name, stock, category, _id: productId, description, ratings, numOfReviews, suggestedItems, variants } = data?.product || {
         price: 0,
         photos: [],
         name: "",
@@ -55,9 +56,83 @@ const ProductDetails = () => {
         description: "",
         ratings: 0,
         numOfReviews: 0,
-        suggestedItems:[]
+        suggestedItems:[],
+        variants: []
     };
-console.log( suggestedItems )
+
+    // Extract unique configurations and their values
+    const uniqueConfigurations = variants.reduce((acc, variant) => {
+        variant.configuration.forEach(({ key, value }) => {
+            if (!acc[key]) acc[key] = new Set();
+            acc[key].add(value);
+        });
+        return acc;
+    }, {} as Record<string, Set<string>>);
+
+    // Transform sets into arrays for rendering
+    const configurations = Object.entries(uniqueConfigurations).reduce(
+        (acc, [key, valueSet]) => {
+            acc[key] = Array.from(valueSet);
+            return acc;
+        },
+        {} as Record<string, string[]>
+    );
+
+    // Filter variants based on selected configuration
+    const filteredVariant = variants.find((variant) =>
+        variant.configuration.every(({ key, value }) => selectedConfig[key] === value)
+    );
+
+    useEffect(() => {
+        if (!filteredVariant) {
+            const configurationKeys = Object.keys(configurations); // Prioritized configuration keys (order matters)
+    
+            // Find the closest valid variant based on priority
+            const closestVariant = variants.reduce<{
+                variant: typeof variants[0] | null;
+                score: number;
+            }>(
+                (bestVariant, currentVariant) => {
+                    const currentScore = currentVariant.configuration.reduce((score, { key, value }) => {
+                        const keyPriority = configurationKeys.indexOf(key);
+                        if (keyPriority !== -1 && selectedConfig[key] === value) {
+                            score += configurationKeys.length - keyPriority; // Higher score for higher priority
+                        }
+                        return score;
+                    }, 0);
+    
+                    const bestScore = bestVariant?.score || 0;
+                    if (currentScore > bestScore) {
+                        return { variant: currentVariant, score: currentScore };
+                    }
+                    return bestVariant;
+                },
+                { variant: null, score: 0 } // Initial state
+            );
+    
+            if (closestVariant.variant) {
+                const validConfig = closestVariant.variant.configuration.reduce<Record<string, string>>(
+                    (acc, { key, value }) => ({ ...acc, [key]: value }),
+                    {}
+                );
+                setSelectedConfig(validConfig);
+            }
+        }
+    }, [filteredVariant, selectedConfig, configurations, variants]);
+
+    const handleConfigurationChange = (key: string, value: string) => {
+        setSelectedConfig((prev) => {
+            const updatedConfig = { ...prev, [key]: value };
+            return updatedConfig;
+        });
+    };
+    
+    useEffect( ( ) => {
+        if( itemQuantity > filteredVariant?.stock!  ){
+            setItemQuantity( filteredVariant?.stock! );
+        }
+    }, [ filteredVariant ] );
+
     const addToCartHandler = ( cartItem: CartItemType ) => {
         if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
         if( cartItem.stock < cartItem.quantity ) return toast.error( "Exceeds available Stock." );
@@ -115,6 +190,13 @@ console.log( suggestedItems )
         reviewDialogRef.current?.showModal( );
     }
 
+    useEffect( function( ){
+        variants[0]?.configuration.forEach( ( config ) => {
+            handleConfigurationChange( config.key, config.value );
+            console.log( selectedConfig )
+        } ) 
+    },[variants] )
+
     if( isError ) return <Navigate to={"/404"}/>;
 
     return (
@@ -137,7 +219,7 @@ console.log( suggestedItems )
                             }
                         </section>
                         <section>
-                            <code>{category}</code>
+                            <code>{category.toUpperCase( )}</code>
                             <h1>{name}</h1>
                             <em style={{display: "flex", gap: "1rem", alignItems: "center"}}>
                                 <RatingsComponent value={ratings}/>
@@ -148,7 +230,7 @@ console.log( suggestedItems )
                                     <button disabled={itemQuantity <= 1} onClick={ ( ) => { setItemQuantity( itemQuantity - 1 ) } }>-</button>
                                     <span>{itemQuantity}</span>
                                     <button disabled={itemQuantity >= 9999} onClick={ ( ) => {
-                                        if( stock === itemQuantity ) return toast.error( `${stock} available only` );
+                                        if(  itemQuantity === ( filteredVariant?.stock || stock ) ) return toast.error( `${filteredVariant?.stock || stock} available only` );
                                         setItemQuantity( itemQuantity + 1 );
                                     } }>+</button>
                                 </div>
@@ -156,17 +238,41 @@ console.log( suggestedItems )
                                     productId,
                                     photo: photos[0].url,
                                     name,
-                                    price,
-                                    stock,
+                                    price: filteredVariant?.price || price,
+                                    stock: filteredVariant?.stock || stock,
                                     quantity: itemQuantity
                                 } ) } }>
                                     ADD TO CART
                                 </button>
                             </article>
-                            <h3>₹{price}</h3>
-                            <p>
-                                {description}
-                            </p>
+                            <h3>${filteredVariant?.price || price}</h3>
+                            {Object.entries(configurations).map(([key, values]) => (
+                                <div key={key} style={{ display: "flex", flexDirection: "row", justifyContent: "start", marginBottom: "1rem" }}>
+                                    <label style={{width: "7rem",  marginRight: "2rem"}}><b>{key.toUpperCase()}</b></label>
+                                    <div style={{ display: "flex", gap: "1rem" }}>
+                                        {values.map((value) => {
+                                            const isSelected = selectedConfig[key] === value;
+                                            return (
+                                            <label key={value} style={{ display: "flex", gap: "0.5rem", borderWidth: "2px", borderColor: "black", borderStyle: "solid", justifyContent: "center", cursor: "pointer", width: "4rem", height: "2rem", borderRadius: "0.5rem",  border: `2px solid ${isSelected ? "blue" : "black"}`,
+                                            color: isSelected ? "blue" : "black", }}>
+                                                <input
+                                                    type="radio"
+                                                    name={key}
+                                                    value={value}
+                                                    checked={selectedConfig[key] === value}
+                                                    onChange={() => handleConfigurationChange(key, value)}
+                                                    style={{ position: "absolute", clip: "rect(0, 0, 0, 0)"}}
+                                                />
+                                                {value}
+                                            </label>
+                                        )})}
+                                    </div>
+                                </div>
+                            ))}
+                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "start", marginBottom: "1rem" }}>
+                                <label style={{width: "7rem", marginRight: "2rem"}}><b>Description</b></label>
+                                <div>{description}</div>
+                            </div>
                         </section>
                     </main>
                 </>
@@ -187,14 +293,7 @@ console.log( suggestedItems )
                 <article>
                     <h2>Bought Together</h2>
                 </article>
-                <div
-                    style={{
-                        display: "flex",
-                        gap: "2rem",
-                        overflowX: "auto",
-                        padding: "2rem",
-                    }}
-                >
+                <div className="product-recommendation">
                     {
                         isLoading ? (
                             <>
@@ -208,9 +307,9 @@ console.log( suggestedItems )
                                       <ProductCard
                                         key={product.productId._id}
                                         productId={product.productId._id}
-                                        price={product.productId.price}
+                                        price={product.productId.variants?.[0]?.price || product.productId.price}
                                         name={product.productId.name}
-                                        stock={product.productId.stock}
+                                        stock={product.productId.variants?.[0]?.stock || product.productId.stock}
                                         photos={product.productId.photos}
                                         handler={addToCartHandler}
                                       />

@@ -6,6 +6,7 @@ import { responseToast } from "../../../utils/features";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
 import { useFileHandler } from "6pp";
+import { ProductVariantType, Configuration } from "../../../types/types";
 
 const NewProduct = () => {
   const [name, setName] = useState<string>("");
@@ -17,7 +18,43 @@ const NewProduct = () => {
   const navigate = useNavigate();
   const { user } = useSelector( ( state: RootState ) => state.userReducer );
   const [ isLoading, setIsLoading ] = useState<boolean>( false );
-  const photos = useFileHandler( "multiple", 10, 5 ); 
+  const photos = useFileHandler( "multiple", 10, 5 );
+  const [ variants, setVariants ] = useState<ProductVariantType[]>(
+    [
+      {
+        configuration: [
+          {
+            key: "",
+            value: ""
+          }
+        ],
+        price: 0,
+        stock: 0
+      }
+    ]
+  );
+
+  const handleVariantConfigChange = (variantIndex: number, configIndex: number, field: keyof Configuration, value: string) => {
+    const updatedVariants = [ ...variants ];
+    updatedVariants[variantIndex].configuration[configIndex][field] = value;
+    setVariants( updatedVariants );
+  };
+
+  const handleVariantChange = (variantIndex: number, field: "stock" | "price", value: number) => {
+    const updatedVariants = [ ...variants ];
+    updatedVariants[variantIndex][field] = value;
+    setVariants( updatedVariants );
+  };
+
+  const addConfigOption = (variantIndex: number) => {
+      const updatedVariants = [ ...variants ];
+      updatedVariants[ variantIndex ].configuration.push( { key: "", value: "" } );
+      setVariants( updatedVariants );
+  };
+
+  const addVariant = () => {
+      setVariants( [...variants, { configuration: [{ key: "", value: "" }], price: 0, stock: 0 }] );
+  };
 
   const createProductHandler = async( e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,15 +74,17 @@ const NewProduct = () => {
       formData.set( "stock", stock.toString() );
       formData.set( "category", category );
       formData.set( "description", description );
+
+      // Serialize the variants array
+      formData.set("variants", JSON.stringify( variants ) );
   
       photos.file.forEach( ( file ) => {
         formData.append( "photos", file );
-      } )
-      
+      } );
   
       const res = await createProduct( {
         id: user?._id!,
-        formData
+        formData,
       } );
   
       responseToast( res, navigate,"/admin/product" );
@@ -113,7 +152,47 @@ const NewProduct = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
-
+            <h3>Variants</h3>
+            {variants.map((variant, variantIndex) => (
+              <div className="product-variant" key={variantIndex}>
+                  {variant.configuration.map((config, configIndex) => (
+                      <div key={configIndex}>
+                        <div className="product-varient-config">
+                          <label>Config Key</label>
+                            <input
+                                type="text"
+                                placeholder="Config Key (e.g., RAM)"
+                                value={config.key}
+                                onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "key", e.target.value)}
+                                required
+                            />
+                          </div>
+                          <div className="product-varient-config">
+                            <label>Config Value</label>
+                            <input
+                                type="text"
+                                placeholder="Config Value (e.g., 4GB)"
+                                value={config.value}
+                                onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "value", e.target.value)}
+                                required
+                            />
+                          </div>
+                      </div>
+                  ))}
+                  <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
+                  <div style={{marginTop: "1.5rem"}}>
+                    <div className="product-varient-config">
+                      <label>Price</label>
+                    <input type="number" placeholder="Price" value={variant.price} onChange={(e) => handleVariantChange(variantIndex, "price", Number(e.target.value))} required />
+                    </div>
+                    <div className="product-varient-config">
+                      <label>Stock</label>
+                    <input type="number" placeholder="Stock" value={variant.stock} onChange={(e) => handleVariantChange(variantIndex, "stock", Number(e.target.value))} required />
+                    </div>
+                  </div>
+              </div>
+            ))}
+            <button type="button" onClick={addVariant}>Add Variant</button>
             <div>
               <label>Photos</label>
               <input type="file" accept="images/*" multiple required onChange={photos.changeHandler} />

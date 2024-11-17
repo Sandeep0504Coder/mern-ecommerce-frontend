@@ -224,3 +224,11 @@
       font-size: 1.25rem;
     }
   }
+
+  .product-recommendation {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    padding: 2rem;
+  }

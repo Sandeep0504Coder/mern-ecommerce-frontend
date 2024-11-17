@@ -81,9 +81,9 @@ const Search = () => {
               <ProductCard
                 key={product._id}
                 productId={product._id}
-                price={product.price}
+                price={product.variants?.[0]?.price || product.price}
                 name={product.name}
-                stock={product.stock}
+                stock={product.variants?.[0]?.stock || product.stock}
                 handler={addToCartHandler}
                 photos={product.photos}
               />

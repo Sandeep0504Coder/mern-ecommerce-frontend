@@ -4,7 +4,7 @@ import AdminSidebar from "../../../components/admin/AdminSidebar";
 import { useDeleteProductMutation, useProductDetailsQuery, useUpdateProductMutation } from "../../../redux/api/productAPI";
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { ProductUpdateFormData } from "../../../types/types";
+import { Configuration, ProductUpdateFormData } from "../../../types/types";
 import { RootState } from "../../../redux/store";
 import { Skeleton } from "../../../components/Loader";
 import { responseToast } from "../../../utils/features";
@@ -20,13 +20,14 @@ const Productmanagement = () => {
 
   const { data, isLoading, isError } = useProductDetailsQuery( params.id! );
 
-  const { price, photos, name, stock, category, description } = data?.product || {
+  const { price, photos, name, stock, category, description, variants } = data?.product || {
     price: 0,
     photos: [],
     name: "",
     stock: 0,
     category: "",
-    description: ""
+    description: "",
+    variants: []
   };
 
   const [ btnLoading, setBtnLoading ] = useState<boolean>( false );
@@ -35,10 +36,11 @@ const Productmanagement = () => {
     stockUpdate: stock,
     nameUpdate: name,
     categoryUpdate: category,
-    descriptionUpdate: description
+    descriptionUpdate: description,
+    variantsUpdate: variants
   } );
 
-  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, descriptionUpdate } = productUpdate;
+  const {priceUpdate, stockUpdate, nameUpdate, categoryUpdate, descriptionUpdate, variantsUpdate } = productUpdate;
 
   const photosFile = useFileHandler( "multiple", 10, 5 );
 
@@ -61,6 +63,9 @@ const Productmanagement = () => {
         } )
       }
 
+      // Serialize the variants array
+      formData.set("variants", JSON.stringify( variantsUpdate ) );
+
       const res = await updateProduct( {
         id: user?._id!,
         productId: data?.product._id!,
@@ -82,6 +87,28 @@ const Productmanagement = () => {
     } ) );
   }
 
+  const handleVariantConfigChange = (variantIndex: number, configIndex: number, field: keyof Configuration, value: string) => {
+    const updatedVariants = structuredClone( variantsUpdate );
+    updatedVariants[variantIndex].configuration[configIndex][field] = value;
+    setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
+  };
+
+  const handleVariantChange = (variantIndex: number, field: "stock" | "price", value: number) => {
+    const updatedVariants = structuredClone( variantsUpdate );
+    updatedVariants[variantIndex][field] = value;
+    setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
+  };
+
+  const addConfigOption = (variantIndex: number) => {
+    let updatedVariants = structuredClone( variantsUpdate );
+    updatedVariants[ variantIndex ].configuration.push( { key: "", value: "" } );
+    setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
+  };
+
+  const addVariant = () => {
+    setProductUpdate( { ...productUpdate, variantsUpdate: [...variantsUpdate, { configuration: [{ key: "", value: "" }], price: 0, stock: 0 }] } );
+  };
+
   const deleteProductHandler = async( ) => {
     const res = await deleteProduct( {
       userId: user?._id!,
@@ -98,7 +125,8 @@ const Productmanagement = () => {
         stockUpdate: data?.product.stock!,
         nameUpdate: data?.product.name!,
         categoryUpdate: data?.product.category!,
-        descriptionUpdate: data?.product.description!
+        descriptionUpdate: data?.product.description!,
+        variantsUpdate: data?.product.variants
       } )
     }
   }, [ data ] );
@@ -120,7 +148,7 @@ const Productmanagement = () => {
               ) : (
                 <span className="red"> Not Available</span>
               )}
-              <h3>₹{price}</h3>
+              <h3>${price}</h3>
             </section>
             <article>
               <button className="product-delete-btn" onClick={deleteProductHandler}>
@@ -178,6 +206,47 @@ const Productmanagement = () => {
                     onChange={changeInputHandler}
                   />
                 </div>
+                <h3>Variants</h3>
+                {variantsUpdate.map((variant, variantIndex) => (
+                  <div className="product-variant" key={variantIndex}>
+                      {variant.configuration.map((config, configIndex) => (
+                          <div key={configIndex}>
+                            <div className="product-varient-config">
+                              <label>Config Key</label>
+                                <input
+                                    type="text"
+                                    placeholder="Config Key (e.g., RAM)"
+                                    value={config.key}
+                                    onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "key", e.target.value)}
+                                    required
+                                />
+                              </div>
+                              <div className="product-varient-config">
+                                <label>Config Value</label>
+                                <input
+                                    type="text"
+                                    placeholder="Config Value (e.g., 4GB)"
+                                    value={config.value}
+                                    onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "value", e.target.value)}
+                                    required
+                                />
+                              </div>
+                          </div>
+                      ))}
+                      <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
+                      <div style={{marginTop: "1.5rem"}}>
+                        <div className="product-varient-config">
+                          <label>Price</label>
+                        <input type="number" placeholder="Price" value={variant.price} onChange={(e) => handleVariantChange(variantIndex, "price", Number(e.target.value))} required />
+                        </div>
+                        <div className="product-varient-config">
+                          <label>Stock</label>
+                        <input type="number" placeholder="Stock" value={variant.stock} onChange={(e) => handleVariantChange(variantIndex, "stock", Number(e.target.value))} required />
+                        </div>
+                      </div>
+                  </div>
+                ))}
+                <button type="button" onClick={addVariant}>Add Variant</button>
                 <div>
                   <label>Photos</label>
                   <input type="file" accept="images/*" multiple onChange={photosFile.changeHandler} />
