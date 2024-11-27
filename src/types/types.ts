@@ -72,6 +72,7 @@ export type CartItemType = {
     price: number;
     quantity: number;
     stock: number;
+    variant: ProductVariantType | undefined;
 }
 
 export type OrderItemType = Omit<CartItemType, "stock"> & {
@@ -179,6 +180,7 @@ export type ProductVariantType = {
     configuration: Configuration[];
     price: number;
     stock: number;
+    _id?: string;
 }
 
 export interface Configuration {

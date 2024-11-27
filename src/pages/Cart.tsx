@@ -21,7 +21,8 @@ const Cart = () => {
 
     dispatch( addToCart( {
       ...cartItem,
-      quantity: cartItem.quantity + 1
+      quantity: cartItem.quantity + 1,
+      updateItemIfFound: true,
     } ) );
   }
 
@@ -30,12 +31,13 @@ const Cart = () => {
 
     dispatch( addToCart( {
       ...cartItem,
-      quantity: cartItem.quantity - 1
+      quantity: cartItem.quantity - 1,
+      updateItemIfFound: true,
     } ) );
   }
 
-  const removeHandler = ( productId: string ) => {
-    dispatch( removeFromCart( productId ) );
+  const removeHandler = ( productId: string, variantId: string ) => {
+    dispatch( removeFromCart( { productId, variantId } ) );
   }
 
   useEffect(() => {
@@ -52,8 +54,7 @@ const Cart = () => {
         dispatch( calculatePrice() );
         setIsValidCouponCode(true);
       } )
-      .catch( (e) => {
-        console.log( e.response.data.message )
+      .catch( ( ) => {
         dispatch( applyDiscount( 0 ) );
         dispatch( calculatePrice() );
         setIsValidCouponCode(false);

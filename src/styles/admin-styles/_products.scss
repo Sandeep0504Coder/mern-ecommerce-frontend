@@ -171,13 +171,22 @@
 
         >button{
           padding: 1rem;
-        border: none;
-        background-color: rgb(5, 107, 224);
-        color: white;
-        width: 100%;
-        border-radius: 5px;
-        font-size: 1.1rem;
-        cursor: pointer;
+          border: none;
+          background-color: rgb(5, 107, 224);
+          color: white;
+          width: 100%;
+          border-radius: 5px;
+          font-size: 1.1rem;
+          cursor: pointer;
+        }
+
+        .remove-variant, .remove-config {
+          background-color: white;
+          border: 0;
+          >svg{
+            color: red;
+            font-size: x-large;
+          }
         }
       }
     }

@@ -82,8 +82,8 @@ const Shipping = () => {
                 <input required type="text" placeholder="City" name="city" value={shippingInfo.city} onChange={changeHandler}/>
                 <input required type="text" placeholder="State" name="state" value={shippingInfo.state} onChange={changeHandler}/>
                 <select name="country" required value={shippingInfo.country} onChange={changeHandler}>
-                    <option value="">Select Country</option>
-                    {countryOptions.map( ( countryOption ) => ( <option value={countryOption.id}>{countryOption.country}</option> ) )}
+                    <option key={""} value="">Select Country</option>
+                    {countryOptions.map( ( countryOption ) => ( <option key={countryOption.id} value={countryOption.id}>{countryOption.country}</option> ) )}
                 </select>
                 <input required type="number" placeholder="Pin Code" name="pinCode" value={shippingInfo.pinCode} onChange={changeHandler}/>
                 <button type="submit">Pay Now</button>

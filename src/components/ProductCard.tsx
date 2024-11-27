@@ -1,5 +1,5 @@
 import { FaPlus } from "react-icons/fa";
-import { CartItemType } from "../types/types";
+import { CartItemType, ProductVariantType } from "../types/types";
 import { GrView } from "react-icons/gr";
 import { Link } from "react-router-dom";
 
@@ -12,14 +12,30 @@ type ProductProps = {
   name: string;
   price: number;
   stock: number;
+  variants: ProductVariantType[];
   handler: (cartItem: CartItemType) => string | undefined;
 }
 
-const ProductCard = ({productId, photos, name,price,stock,handler}:ProductProps) => {
+const ProductCard = ({productId, photos, name,price,stock, variants, handler}:ProductProps) => {
+  let  selectedConfigName = "";
+
+  variants?.[0]?.configuration?.forEach( ( config, index )=> {
+    if( index == 0 ){
+      selectedConfigName += " ( ";
+    }
+    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+
+    if( index != variants[0].configuration.length - 1 ){
+      selectedConfigName += ", "; 
+    } else {
+      selectedConfigName += " )";
+    }
+  } );
+  
   return (
     <div className="product-card">
       <img src={photos?.[0]?.url} alt={name} />
-      <p>{name}</p>
+      <p>{`${name}${selectedConfigName}`}</p>
       <span>${price}</span>
       <div>
         <Link to={`/productDetails/${productId}`}>
@@ -31,7 +47,8 @@ const ProductCard = ({productId, photos, name,price,stock,handler}:ProductProps)
           name,
           price,
           stock,
-          quantity: 1
+          quantity: 1,
+          variant: variants?.[0] || undefined,
         })}>
           <FaPlus/>
         </button>

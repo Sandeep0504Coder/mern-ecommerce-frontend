@@ -14,14 +14,20 @@ import { RootState } from "../redux/store";
 import { responseToast } from "../utils/features";
 import { FaRegStar, FaStar, FaTrash } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
+import { useSearchParams } from "react-router-dom";
 
 const ProductDetails = () => {
     const dispatch = useDispatch( );
     const params = useParams();
+    const searchQuery = useSearchParams()[0];
     const navigate = useNavigate( );
     const { user } = useSelector( ( state: RootState ) => state.userReducer );
+    const { cartItems } = useSelector( ( state: RootState ) => state.cartReducer );
+    const [ selectedVariantId ] = useState<string>( searchQuery.get( "variantId" ) || "" );
     const [ itemQuantity, setItemQuantity ] = useState<number>( 1 );
     const [ carouselOpen, setCarouselOpen ] = useState<boolean>( false );
+    const [ configChangeLoding, setConfigChangeLoding ] = useState<boolean>( false );
+    const [ itemPresentInCart, setItemPresentInCart ] = useState<boolean>( false );
     const [ reviewComment, setReviewComment ] = useState<string>( "" );
     const [selectedConfig, setSelectedConfig] = useState<Record<string, string>>({});
     const reviewDialogRef = useRef<HTMLDialogElement>( null );
@@ -83,6 +89,22 @@ const ProductDetails = () => {
         variant.configuration.every(({ key, value }) => selectedConfig[key] === value)
     );
 
+    let  selectedConfigName = "";
+
+    filteredVariant?.configuration?.forEach( ( config, index )=> {
+        if( index == 0 ){
+            selectedConfigName += " ( ";
+        }
+        
+        selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+
+        if( index != filteredVariant.configuration.length - 1 ){
+            selectedConfigName += ", "; 
+        } else {
+            selectedConfigName += " )";
+        }
+    } );
+
     useEffect(() => {
         if (!filteredVariant) {
             const configurationKeys = Object.keys(configurations); // Prioritized configuration keys (order matters)
@@ -128,8 +150,35 @@ const ProductDetails = () => {
     };
     
     useEffect( ( ) => {
+        setConfigChangeLoding( true );
         if( itemQuantity > filteredVariant?.stock!  ){
             setItemQuantity( filteredVariant?.stock! );
+        }
+
+        const existingItemIndex = cartItems.findIndex( ( item ) => {
+            if( item.productId === data?.product._id ){
+                if( item.variant ){
+                    return item.variant._id === filteredVariant?._id;
+                } else {
+                    return true;
+                }
+            }
+        } );
+
+        if( existingItemIndex !== -1 ){
+            setItemPresentInCart( true );
+            setItemQuantity( cartItems[ existingItemIndex ].quantity );
+        } else {
+            setItemPresentInCart( false );
+            setItemQuantity( 1 );
+        }
+
+        const timeOutId = setTimeout( function( ){
+            setConfigChangeLoding( false );
+        }, 1000 );
+
+        return ( ) => {
+            clearTimeout( timeOutId );
         }
     }, [ filteredVariant ] );
 
@@ -137,9 +186,11 @@ const ProductDetails = () => {
         if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
         if( cartItem.stock < cartItem.quantity ) return toast.error( "Exceeds available Stock." );
         
-        dispatch( addToCart( cartItem ) );
+        dispatch( addToCart( {
+            ...cartItem,
+            updateItemIfFound: true,
+        } ) );
         navigate( "/cart" );
-        toast.success( `${cartItem.name} added to cart.` );
     }
 
     const closeReviewDialog = ( ) => {
@@ -193,15 +244,22 @@ const ProductDetails = () => {
     useEffect( function( ){
         variants[0]?.configuration.forEach( ( config ) => {
             handleConfigurationChange( config.key, config.value );
-            console.log( selectedConfig )
         } ) 
-    },[variants] )
+    },[ variants ] );
+
+    useEffect( function( ){
+        const selectedConfiguration = variants.find( ( variant ) => selectedVariantId == variant._id )?.configuration
+
+        if( selectedConfiguration && selectedConfiguration.length ){
+            selectedConfiguration.forEach( ( { key, value } ) => handleConfigurationChange( key, value ) );
+        }
+    },[ selectedVariantId, variants ] );
 
     if( isError ) return <Navigate to={"/404"}/>;
 
     return (
         <div className="product-details">
-            {isLoading ? <ProductLoader/> : (
+            { ( isLoading || configChangeLoding ) ? <ProductLoader/> : (
                 <>
                     <main>
                         <section>
@@ -220,7 +278,7 @@ const ProductDetails = () => {
                         </section>
                         <section>
                             <code>{category.toUpperCase( )}</code>
-                            <h1>{name}</h1>
+                            <h1>{`${name}${selectedConfigName}`}</h1>
                             <em style={{display: "flex", gap: "1rem", alignItems: "center"}}>
                                 <RatingsComponent value={ratings}/>
                                 {numOfReviews} reviews
@@ -240,9 +298,10 @@ const ProductDetails = () => {
                                     name,
                                     price: filteredVariant?.price || price,
                                     stock: filteredVariant?.stock || stock,
-                                    quantity: itemQuantity
+                                    quantity: itemQuantity,
+                                    variant: filteredVariant || undefined,
                                 } ) } }>
-                                    ADD TO CART
+                                    {itemPresentInCart ? "UPDATE CART" : "ADD TO CART"}
                                 </button>
                             </article>
                             <h3>${filteredVariant?.price || price}</h3>
@@ -311,6 +370,7 @@ const ProductDetails = () => {
                                         name={product.productId.name}
                                         stock={product.productId.variants?.[0]?.stock || product.productId.stock}
                                         photos={product.productId.photos}
+                                        variants={product.productId.variants}
                                         handler={addToCartHandler}
                                       />
                                     )
@@ -362,9 +422,9 @@ const ProductLoader = () => {
     return <div style={{
         display: "flex",
         gap: "2rem",
-        height: "80vh",
+        height: "135vh",
     }}>
-        <section style={{ width: "100%", height: "100%" }}>
+        <section style={{ width: "100%", height: "50%" }}>
             <Skeleton width="100%" containerHeight="100%" height="100%" length={1} />
         </section>
         <section style={{width: "100%", display: "flex", flexDirection: "column", gap: "4rem", padding: "2rem" }}>

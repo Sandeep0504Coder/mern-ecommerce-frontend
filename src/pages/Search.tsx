@@ -19,8 +19,6 @@ const Search = () => {
   const [maxPrice, setMaxPrice] = useState(100000)
   const [category, setCategory] = useState<string>( searchQuery.get( "category" ) || "" );
   const [page, setPage] = useState<number>(1)
-  const isNextPage = true;
-  const isPrevPage = true;
 
   const { data: searchProductData, isLoading: isSearchProcessing, isError: productIsError, error: productError } = useSearchProductsQuery( {
     price: maxPrice,
@@ -29,13 +27,15 @@ const Search = () => {
     sort,
     search,
   } );
-
+  const isPrevPage = page > 1;
+  const isNextPage = page < searchProductData?.totalPage!;
   const addToCartHandler = ( cartItem: CartItemType ) => {
     if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
 
-    dispatch( addToCart( cartItem ) );
-
-    toast.success( `${cartItem.name} added to cart.` )
+    dispatch( addToCart( {
+      ...cartItem,
+      updateItemIfFound: false,
+    } ) );
   }
   
 
@@ -86,6 +86,7 @@ const Search = () => {
                 stock={product.variants?.[0]?.stock || product.stock}
                 handler={addToCartHandler}
                 photos={product.photos}
+                variants={product.variants}
               />
             ) ) }
           </div>

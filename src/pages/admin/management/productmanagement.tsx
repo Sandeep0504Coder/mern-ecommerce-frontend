@@ -9,6 +9,7 @@ import { RootState } from "../../../redux/store";
 import { Skeleton } from "../../../components/Loader";
 import { responseToast } from "../../../utils/features";
 import { useFileHandler } from "6pp";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
 
 const Productmanagement = () => {
   const navigate = useNavigate();
@@ -93,9 +94,21 @@ const Productmanagement = () => {
     setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
   };
 
+  const removeVariantConfig = ( variantIndex: number, configIndex: number ) => {
+    const updatedVariants = structuredClone( variantsUpdate );
+    updatedVariants[variantIndex].configuration = updatedVariants[variantIndex].configuration.filter( ( config, index ) => index !== configIndex );
+    setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
+  };
+
   const handleVariantChange = (variantIndex: number, field: "stock" | "price", value: number) => {
     const updatedVariants = structuredClone( variantsUpdate );
     updatedVariants[variantIndex][field] = value;
+    setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
+  };
+
+  const removeVariant = ( variantIndex: number ) => {
+    let updatedVariants = structuredClone( variantsUpdate );
+    updatedVariants = updatedVariants.filter( ( variant, index ) => index !== variantIndex );
     setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
   };
 
@@ -207,43 +220,49 @@ const Productmanagement = () => {
                   />
                 </div>
                 <h3>Variants</h3>
-                {variantsUpdate.map((variant, variantIndex) => (
+                {variantsUpdate.map( ( variant, variantIndex ) => (
                   <div className="product-variant" key={variantIndex}>
-                      {variant.configuration.map((config, configIndex) => (
-                          <div key={configIndex}>
-                            <div className="product-varient-config">
-                              <label>Config Key</label>
-                                <input
-                                    type="text"
-                                    placeholder="Config Key (e.g., RAM)"
-                                    value={config.key}
-                                    onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "key", e.target.value)}
-                                    required
-                                />
-                              </div>
-                              <div className="product-varient-config">
-                                <label>Config Value</label>
-                                <input
-                                    type="text"
-                                    placeholder="Config Value (e.g., 4GB)"
-                                    value={config.value}
-                                    onChange={(e) => handleVariantConfigChange(variantIndex, configIndex, "value", e.target.value)}
-                                    required
-                                />
-                              </div>
-                          </div>
-                      ))}
-                      <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
-                      <div style={{marginTop: "1.5rem"}}>
+                    { variant.configuration.map( ( config, configIndex ) => (
+                      <div key={configIndex}>
                         <div className="product-varient-config">
-                          <label>Price</label>
-                        <input type="number" placeholder="Price" value={variant.price} onChange={(e) => handleVariantChange(variantIndex, "price", Number(e.target.value))} required />
+                          <label>Config Key</label>
+                          <input
+                            type="text"
+                            placeholder="Config Key (e.g., RAM)"
+                            value={config.key}
+                            onChange={( e ) => handleVariantConfigChange( variantIndex, configIndex, "key", e.target.value )}
+                            required
+                          />
                         </div>
                         <div className="product-varient-config">
-                          <label>Stock</label>
-                        <input type="number" placeholder="Stock" value={variant.stock} onChange={(e) => handleVariantChange(variantIndex, "stock", Number(e.target.value))} required />
+                          <label>Config Value</label>
+                          <input
+                              type="text"
+                              placeholder="Config Value (e.g., 4GB)"
+                              value={config.value}
+                              onChange={( e ) => handleVariantConfigChange( variantIndex, configIndex, "value", e.target.value )}
+                              required
+                          />
                         </div>
+                        <button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
+                          <IoIosRemoveCircleOutline />
+                        </button>
                       </div>
+                    ) ) }
+                    <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
+                    <div style={{marginTop: "1.5rem"}}>
+                      <div className="product-varient-config">
+                        <label>Price</label>
+                        <input type="number" placeholder="Price" value={variant.price} onChange={(e) => handleVariantChange(variantIndex, "price", Number(e.target.value))} required />
+                      </div>
+                      <div className="product-varient-config">
+                        <label>Stock</label>
+                        <input type="number" placeholder="Stock" value={variant.stock} onChange={(e) => handleVariantChange(variantIndex, "stock", Number(e.target.value))} required />
+                      </div>
+                      <button className="remove-variant" onClick={( ) => removeVariant( variantIndex )}>
+                        <IoIosRemoveCircleOutline />
+                      </button>
+                    </div>
                   </div>
                 ))}
                 <button type="button" onClick={addVariant}>Add Variant</button>

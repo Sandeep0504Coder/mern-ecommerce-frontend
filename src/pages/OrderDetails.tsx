@@ -63,6 +63,7 @@ const OrderDetails = () => {
                 _id={i._id}
                 quantity={i.quantity}
                 price={i.price}
+                variant={i.variant}
               />
             ))}
           </section>
@@ -109,14 +110,34 @@ const ProductCard = ({
   price,
   quantity,
   productId,
-}:OrderItemType) => (
-  <div className="transaction-product-card">
-    <img src={photo} alt={name} />
-    <Link to={`/productDetails/${productId}`}>{name}</Link>
-    <span>
-      ${price} X {quantity} = ${price * quantity}
-    </span>
-  </div>
-);
+  variant
+}:OrderItemType) => {
+  let selectedConfigName = "";
+  let variantQueyParam = variant?._id ? `?variantId=${variant._id}` : "";
+
+  variant?.configuration?.forEach( ( config, index )=> {
+    if( index == 0 ){
+      selectedConfigName += " ( ";
+    }
+
+    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+
+    if( index != variant.configuration.length - 1 ){
+      selectedConfigName += ", "; 
+    } else {
+      selectedConfigName += " )";
+    }
+  } );
+
+  return (
+    <div className="transaction-product-card">
+      <img src={photo} alt={name} />
+      <Link to={`/productDetails/${productId}${variantQueyParam}`}>{`${name}${selectedConfigName}`}</Link>
+      <span>
+        ${price} X {quantity} = ${price * quantity}
+      </span>
+    </div>
+  )
+};
 
 export default OrderDetails

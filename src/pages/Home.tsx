@@ -126,9 +126,10 @@ const Home = () => {
   const addToCartHandler = ( cartItem: CartItemType ) => {
     if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
 
-    dispatch( addToCart( cartItem ) );
-
-    toast.success( `${cartItem.name} added to cart.` )
+    dispatch( addToCart( {
+      ...cartItem,
+      updateItemIfFound: false,
+    } ) );
   }
   
   const{ data, isLoading, isError } = useLatestProductsQuery( "" );
@@ -177,6 +178,7 @@ const Home = () => {
                 name={product.name}
                 stock={product.variants?.[0]?.stock || product.stock}
                 photos={product.photos}
+                variants={product.variants}
                 handler={addToCartHandler}
               />
             )
