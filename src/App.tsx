@@ -28,7 +28,7 @@ const Products = lazy(() => import("./pages/admin/products"));
 const Customers = lazy(() => import("./pages/admin/customers"));
 const Transaction = lazy(() => import("./pages/admin/transaction"));
 const Coupons = lazy(() => import("./pages/admin/Coupons"));
-const Barcharts = lazy(() => import("./pages/admin/charts/BarCharts"));
+const Barcharts = lazy(() => import("./pages/admin/charts/BarChats"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));
 const Linecharts = lazy(() => import("./pages/admin/charts/linecharts"));
 const NewCoupon = lazy(() => import("./pages/admin/management/NewCoupon"));
@@ -63,8 +63,7 @@ const App = () => {
     } catch( e ){
       console.log( e );
     }
-    
-  } )
+  } );
   }, [ ] );
   
   const { user, loading } = useSelector( ( state: RootState ) => ( state.userReducer ) )

@@ -96,7 +96,10 @@ const Productmanagement = () => {
 
   const removeVariantConfig = ( variantIndex: number, configIndex: number ) => {
     const updatedVariants = structuredClone( variantsUpdate );
-    updatedVariants[variantIndex].configuration = updatedVariants[variantIndex].configuration.filter( ( config, index ) => index !== configIndex );
+    updatedVariants[variantIndex].configuration = updatedVariants[variantIndex].configuration.filter( ( config, index ) => {
+      console.log( config );
+      return index !== configIndex;
+    } );
     setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
   };
 
@@ -108,7 +111,11 @@ const Productmanagement = () => {
 
   const removeVariant = ( variantIndex: number ) => {
     let updatedVariants = structuredClone( variantsUpdate );
-    updatedVariants = updatedVariants.filter( ( variant, index ) => index !== variantIndex );
+    updatedVariants = updatedVariants.filter( ( variant, index ) => {
+      console.log( variant );
+
+      return index !== variantIndex;
+    } );
     setProductUpdate( {...productUpdate, variantsUpdate: updatedVariants } );
   };
 
