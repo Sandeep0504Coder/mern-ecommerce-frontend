@@ -4,7 +4,6 @@ import {
   FaChartBar,
   FaChartLine,
   FaChartPie,
-  FaGamepad,
 } from "react-icons/fa";
 import { GrSystem } from "react-icons/gr";
 import { TbTruckDelivery } from "react-icons/tb";
