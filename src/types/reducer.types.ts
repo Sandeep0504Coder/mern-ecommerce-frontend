@@ -7,6 +7,7 @@ export interface UserReducerInitialState{
 
 export interface CartReducerInitialState{
     loading: boolean;
+    selectedShippingAddressId: string;
     cartItems: CartItemType[];
     subtotal: number;
     tax: number;

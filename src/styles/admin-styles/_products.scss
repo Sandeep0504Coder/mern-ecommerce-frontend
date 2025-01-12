@@ -131,6 +131,13 @@
           border-radius: 5px;
           max-height: 10rem;
         }
+
+        >select{
+          @include inputStyle;
+          border: 1px solid rgba(31,31,31,0.351);
+          font-size: 1.05rem;
+          border-radius: 5px;
+        }
       }
 
       > button {

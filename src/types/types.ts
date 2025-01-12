@@ -51,6 +51,61 @@ export type review = {
     _id: string;
 };
 
+export type Address = {
+    _id: string;
+    name: string;
+    primaryPhone: string;
+    secondaryPhone: string;
+    address: string;
+    address2: string;
+    city: string;
+    state: string;
+    country: string;
+    pinCode: string;
+    user: string;
+    isDefault: boolean;
+};
+
+export type DeliveryRule = {
+    _id: string;
+    ruleName: string;
+    subtotalMinRange: number;
+    subtotalMaxRange: number;
+    amount: number;
+    percentage: number;
+    setDeliveryFeeTo: string;
+};
+
+export type SystemSetting = {
+    _id: string;
+    settingCategory: string;
+    settingUniqueName: string;
+    settingName: string;
+    settingValue: string;
+    entityId: string;
+    entityDetails: string;
+};
+
+export type SystemSettingDetail = {
+    _id: string;
+    settingCategory: string;
+    settingUniqueName: string;
+    settingName: string;
+    settingValue: string;
+    entityId: string;
+    entityOptions?: any[]
+};
+
+export type SystemSettingValueDetail = {
+    _id: string;
+    settingCategory: string;
+    settingUniqueName: string;
+    settingName: string;
+    settingValue: string;
+    entityId: string;
+    entityDetails?: any
+};
+
 export type Coupon = {
     _id: string;
     code: string;
@@ -58,7 +113,11 @@ export type Coupon = {
 }
 
 export type ShippingInfo = {
+    name: string;
+    primaryPhone: string;
+    secondaryPhone: string;
     address: string;
+    address2: string;
     city: string;
     state: string;
     country: string;
@@ -88,6 +147,32 @@ export interface ProductUpdateFormData {
     variantsUpdate: ProductVariantType[];
 }
 
+export type CreateAddressFormData = {
+    name: string;
+    primaryPhone: string;
+    secondaryPhone?: string;
+    address: string;
+    address2?: string;
+    city: string;
+    state: string;
+    country: string;
+    pinCode: string;
+    isDefault: boolean;
+}
+
+export type UpdateAddressFormData = {
+    nameUpdate: string;
+    primaryPhoneUpdate: string;
+    secondaryPhoneUpdate?: string;
+    addressUpdate: string;
+    address2Update?: string;
+    cityUpdate: string;
+    stateUpdate: string;
+    countryUpdate: string;
+    pinCodeUpdate: string;
+    isDefaultUpdate: boolean;
+}
+
 export type OrderType = {
     orderItems: OrderItemType[],
     subtotal: number;
@@ -102,6 +187,7 @@ export type OrderType = {
         _id: string;
     };
     _id: string;
+    createdAt: string;
 }
 
 type CountAndChange = {
@@ -186,4 +272,27 @@ export type ProductVariantType = {
 export interface Configuration {
     key: string;
     value: string;
+}
+
+export type CreateDeliveryRuleFormData = {
+    ruleName: string;
+    subtotalMinRange: number;
+    subtotalMaxRange?: number;
+    amount: number;
+    percentage: number;
+    setDeliveryFeeTo: string;
+}
+
+export type UpdateDeliveryRuleFormData = {
+    ruleNameUpdate: string;
+    subtotalMinRangeUpdate: number;
+    subtotalMaxRangeUpdate?: number;
+    amountUpdate: number;
+    percentageUpdate: number;
+    setDeliveryFeeToUpdate: string;
+}
+
+export type UpdateSystemSettingFormData = {
+    entityIdUpdate: string;
+    settingValueUpdate: string;
 }

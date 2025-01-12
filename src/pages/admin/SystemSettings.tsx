@@ -1,40 +1,39 @@
 import { ReactElement, useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
-import { useAllProductsQuery } from "../../redux/api/productAPI";
 import { RootState } from "../../redux/store";
 import toast from "react-hot-toast";
 import { CustomError } from "../../types/api.types";
 import { useSelector } from "react-redux";
 import { Skeleton } from "../../components/Loader";
+import { useAllSystemSettingsQuery } from "../../redux/api/systemSettingAPI";
 
 interface DataType {
-  photo: ReactElement;
-  name: string;
-  price: number;
-  stock: number;
-  action: ReactElement;
+    settingCategory: string;
+    settingName: string;
+    settingValue: string;
+    settingEnabled: string;
+    action: ReactElement;
 }
 
 const columns: Column<DataType>[] = [
   {
-    Header: "Photo",
-    accessor: "photo",
+    Header: "Setting Category",
+    accessor: "settingCategory",
   },
   {
-    Header: "Name",
-    accessor: "name",
+    Header: "Setting Name",
+    accessor: "settingName",
   },
   {
-    Header: "Price",
-    accessor: "price",
+    Header: "Value",
+    accessor: "settingValue",
   },
   {
-    Header: "Stock",
-    accessor: "stock",
+    Header: "Enabled",
+    accessor: "settingEnabled",
   },
   {
     Header: "Action",
@@ -42,10 +41,10 @@ const columns: Column<DataType>[] = [
   },
 ];
 
-const Products = () => {
+const SystemSettings = () => {
   const { user } = useSelector( ( state: RootState ) => ( state.userReducer ) );
 
-  const { data, isLoading, isError, error } = useAllProductsQuery( user?._id! );
+  const { data, isLoading, isError, error } = useAllSystemSettingsQuery( user?._id! );
 
   const [rows, setRows] = useState<DataType[]>( [] );
 
@@ -54,15 +53,14 @@ const Products = () => {
   useEffect( () => {
     if( data )
       setRows(
-        data.products.map( ( product ) => ( {
-          name: product.name,
-          price: product.price,
-          stock: product.stock,
-          action: <div style={{display: "flex",flexDirection:"row", gap:"4px", alignItems:"center"}}>
-            <Link to={`/admin/product/${product._id}`}>Manage</Link>
-            <Link to={`/admin/product/recommendations/${product._id}`}>Recommendations</Link>
-          </div>,
-          photo: <img src={product.photos?.[0]?.url} alt={product.name} />
+        data.systemSettings.map( ( { _id, settingCategory, settingName, settingValue, entityId, entityDetails } ) => ( {
+            settingCategory,
+            settingName,
+            settingValue: entityId?.length > 0 ? entityDetails : settingValue,
+            settingEnabled: entityId?.length > 0 ? settingValue : "",
+            action: <div style={{display: "flex",flexDirection:"row", gap:"4px", alignItems:"center"}}>
+                <Link to={`/admin/systemSetting/${_id}`}>Manage</Link>
+            </div>,
         } ) )
       );
   }, [data] );
@@ -72,7 +70,7 @@ const Products = () => {
     columns,
     rows,
     "dashboard-product-box",
-    "Products",
+    "System Settings",
     rows.length > 6
   )();
 
@@ -80,11 +78,8 @@ const Products = () => {
     <div className="admin-container">
       <AdminSidebar />
       <main>{isLoading ? <Skeleton length={20}/> : Table}</main>
-      <Link to="/admin/product/new" className="create-product-btn">
-        <FaPlus />
-      </Link>
     </div>
   );
 };
 
-export default Products;
+export default SystemSettings;

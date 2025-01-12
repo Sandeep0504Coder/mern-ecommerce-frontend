@@ -10,7 +10,11 @@ import { responseToast } from "../../../utils/features";
 
 const defaultData: OrderType = {
   shippingInfo: {
+    name: "",
+    primaryPhone: "",
+    secondaryPhone: "",
     address: "",
+    address2: "",
     city: "",
     state: "",
     country: "",
@@ -21,13 +25,14 @@ const defaultData: OrderType = {
     _id: "",
   },
   _id: "",
+  createdAt: "",
   status: "",
-    subtotal: 0,
-    discount: 0,
-    shippingCharges: 0,
-    tax: 0,
-    total: 0,
-    orderItems: [],
+  subtotal: 0,
+  discount: 0,
+  shippingCharges: 0,
+  tax: 0,
+  total: 0,
+  orderItems: [],
 }
 
 const TransactionManagement = () => {
@@ -39,9 +44,8 @@ const TransactionManagement = () => {
   const { data, isLoading, isError } = useOrderDetailsQuery( params.id! );
 
   const {
-    shippingInfo: { address, city, state,country, pinCode },
+    shippingInfo: { name, address, address2, primaryPhone, secondaryPhone, city, state, pinCode, country },
     orderItems,
-    user: {name},
     status,
     subtotal,
     discount,
@@ -97,7 +101,10 @@ const TransactionManagement = () => {
             <h5>User Info</h5>
             <p>Name: {name}</p>
             <p>
-              Address: {`${address}, ${city}, ${state}, ${country} ${pinCode}`}
+              Phone No: {`${primaryPhone}${secondaryPhone ? `, ${secondaryPhone}` : ""}`}
+            </p>
+            <p>
+              Address: {`${address}, ${address2 ? address2 : ""}${address2 && address2.length > 0 ? ", " : ""}${city}, ${state} ${pinCode} ${country.toUpperCase()}`}
             </p>
             <h5>Amount Info</h5>
             <p>Subtotal: {subtotal}</p>

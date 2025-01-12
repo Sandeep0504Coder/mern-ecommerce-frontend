@@ -2,9 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { CartReducerInitialState } from "../../types/reducer.types";
 import { CartItemType, ShippingInfo } from "../../types/types";
 import toast from "react-hot-toast";
+import { SystemSettingDetailByUniqueNameResponse } from "../../types/api.types";
 
 const initialState: CartReducerInitialState = {
     loading: false,
+    selectedShippingAddressId: "",
     cartItems: [],
     subtotal: 0,
     tax: 0,
@@ -12,7 +14,11 @@ const initialState: CartReducerInitialState = {
     discount: 0,
     total: 0,
     shippingInfo: {
+        name: "",
+        primaryPhone: "",
+        secondaryPhone: "",
         address: "",
+        address2: "",
         city: "",
         state: "",
         country: "",
@@ -80,10 +86,27 @@ export const cartReducer = createSlice( {
             } );
             state.loading = false;
         },
-        calculatePrice: ( state ) => {
+        calculatePrice: ( state, action:PayloadAction<{deliveryFeeData:SystemSettingDetailByUniqueNameResponse  | undefined, taxRateData:SystemSettingDetailByUniqueNameResponse  | undefined }> ) => {
+            const {deliveryFeeData, taxRateData} = action.payload;
+            let shippingCharges = 0;
+            let taxRate = 0;
+            
+            if( deliveryFeeData?.systemSetting.settingValue == "true" && state.subtotal >= deliveryFeeData?.systemSetting.entityDetails.subtotalMinRange
+                && ( !deliveryFeeData?.systemSetting.entityDetails.subtotalMaxRange || state.subtotal <= deliveryFeeData?.systemSetting.entityDetails.subtotalMaxRange )
+            ){
+                let shippingChargeByPercent = deliveryFeeData?.systemSetting.entityDetails.percentage * state.subtotal / 100;
+                shippingCharges = deliveryFeeData?.systemSetting.entityDetails.setDeliveryFeeTo == "Greater"
+                    ? shippingChargeByPercent >= deliveryFeeData?.systemSetting.entityDetails.amount ? shippingChargeByPercent : deliveryFeeData?.systemSetting.entityDetails.amount
+                    : shippingChargeByPercent < deliveryFeeData?.systemSetting.entityDetails.amount ? shippingChargeByPercent : deliveryFeeData?.systemSetting.entityDetails.amount
+            }
+
+            if( taxRateData ){
+                taxRate = Number( taxRateData.systemSetting.settingValue );
+            }
+
             state.subtotal = state.cartItems.reduce( ( prevState, item ) => prevState + item.price * item.quantity, 0 );
-            state.shippingCharges = ( state.subtotal > 1000 || state.subtotal === 0 ) ? 0 : 200;
-            state.tax = Math.round(state.subtotal * 0.18);
+            state.shippingCharges = Math.round(shippingCharges);
+            state.tax = Math.round(state.subtotal * taxRate/100);
             state.total = state.subtotal + state.shippingCharges + state.tax - state.discount;
         },
         applyDiscount: ( state, action:PayloadAction<number> ) => {
@@ -92,8 +115,11 @@ export const cartReducer = createSlice( {
         saveShippingInfo: ( state, action:PayloadAction<ShippingInfo> ) => {
             state.shippingInfo = action.payload;
         },
+        modifySelectedShippingAddress: ( state, action: PayloadAction<string> ) => {
+            state.selectedShippingAddressId = action.payload;
+        },
         resetCart: ( ) => initialState,
     },
 } );
 
-export const { addToCart, removeFromCart, calculatePrice, applyDiscount, saveShippingInfo, resetCart } = cartReducer.actions;
+export const { addToCart, removeFromCart, calculatePrice, applyDiscount, saveShippingInfo, resetCart, modifySelectedShippingAddress } = cartReducer.actions;

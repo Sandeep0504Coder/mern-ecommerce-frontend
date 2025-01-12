@@ -6,7 +6,7 @@ export const orderAPI = createApi({
     baseQuery: fetchBaseQuery( { baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/order/` } ),
     tagTypes:["orders"],
     endpoints: (builder) => ({
-        newOrder: builder.mutation<MessageResponse, NewOrderRequest>( {
+        newOrder: builder.mutation<MessageResponse & { orderId: string }, NewOrderRequest>( {
             query: ( order ) => ( {
                 url: "new",
                 method: "POST",

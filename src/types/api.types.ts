@@ -1,6 +1,6 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review, Address, CreateAddressFormData, DeliveryRule, CreateDeliveryRuleFormData, SystemSetting, SystemSettingDetail, SystemSettingValueDetail } from "./types";
 
-export interface MessageResponse{
+export type MessageResponse = {
     success: boolean;
     message: string;
 }
@@ -24,7 +24,15 @@ export interface AllReviewsResponse{
     success: boolean;
     reviews: review[];
 }
+export interface MyAddressesResponse{
+    success: boolean;
+    addresses: Address[];
+}
 
+export interface AddressDetailsResponse{
+    success: boolean;
+    address: Address;
+}
 export interface ProductCategoriesResponse{
     success: boolean;
     categories: string[];
@@ -84,6 +92,31 @@ export interface CouponResonse{
 export interface CouponDetailsResonse{
     success: boolean;
     coupon: Coupon;
+}
+
+export type DeliveryRuleResponse = {
+    success: boolean;
+    deliveryRules: DeliveryRule[];
+}
+
+export type SystemSettingResponse = {
+    success: boolean;
+    systemSettings: SystemSetting[];
+}
+
+export type SystemSettingDetailsResponse = {
+    success: boolean;
+    systemSetting: SystemSettingDetail;
+}
+
+export type SystemSettingDetailByUniqueNameResponse = {
+    success: boolean;
+    systemSetting: SystemSettingValueDetail;
+}
+
+export interface DeliveryRuleDetailsResponse{
+    success: boolean;
+    deliveryRule: DeliveryRule;
 }
 
 export interface SearchProductRequest{
@@ -166,4 +199,23 @@ export interface DeleteCouponRequest{
 export interface CouponDetailsRequest{
     userId: string;
     couponId: string;
+}
+
+export type CreateAddressRequest = {
+    id: string;
+    addressData: CreateAddressFormData;
+}
+
+export type CreateDeliveryRuleRequest = {
+    id: string;
+    deliveryRuleData: CreateDeliveryRuleFormData;
+}
+
+export type UpdateSystemSettingRequest = {
+    userId: string;
+    systemSettingId: string;
+    updateSystemSettingData: {
+        entityId: string;
+        settingValue: string;
+    };
 }

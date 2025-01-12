@@ -19,7 +19,11 @@ const Login = lazy( ( ) => import( "./pages/Login" ) )
 const Shipping = lazy( ( ) => import( './pages/Shipping' ) )
 const Checkout = lazy( ( ) => import( './pages/Checkout' ) )
 const Orders = lazy( ( ) => import( './pages/Orders' ) )
+const MyAddresses = lazy( ( ) => import( './pages/MyAddresses' ) )
+const NewAddress = lazy( ( ) => import( './pages/management/NewAddress' ) )
+const AddressManagement = lazy( ( ) => import( './pages/management/AddressManagement' ) )
 const OrderDetails = lazy( ( ) => import( './pages/OrderDetails' ) )
+const Invoice = lazy( ( ) => import( './pages/Invoice' ) )
 const ProductDetails = lazy( ( ) => import( './pages/ProductDetails' ) )
 const PageNotFound = lazy( ( ) => import( './pages/PageNotFound' ) )
 //Admin Routes importing
@@ -28,13 +32,16 @@ const Products = lazy(() => import("./pages/admin/products"));
 const Customers = lazy(() => import("./pages/admin/customers"));
 const Transaction = lazy(() => import("./pages/admin/transaction"));
 const Coupons = lazy(() => import("./pages/admin/Coupons"));
+const DeliveryRules = lazy(() => import("./pages/admin/DeliveryRules"));
+const SystemSettings = lazy(() => import("./pages/admin/SystemSettings"));
 const Barcharts = lazy(() => import("./pages/admin/charts/BarChats"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));
 const Linecharts = lazy(() => import("./pages/admin/charts/linecharts"));
 const NewCoupon = lazy(() => import("./pages/admin/management/NewCoupon"));
-const Stopwatch = lazy(() => import("./pages/admin/apps/stopwatch"));
-const Toss = lazy(() => import("./pages/admin/apps/toss"));
 const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
+const NewDeliveryRule = lazy(() => import("./pages/admin/management/NewDeliveryRule"));
+const DeliveryRuleManagement = lazy(() => import('./pages/admin/management/DeliveryRuleManagement'));
+const SystemSettingManagement = lazy(() => import('./pages/admin/management/SystemSettingManagement'));
 const ProductManagement = lazy(
   () => import("./pages/admin/management/productmanagement")
 );
@@ -88,7 +95,11 @@ const App = () => {
           <Route element={<ProtectedRoute isAuthenticated={ user ? true : false }/>}>
             <Route path='/shipping' element={<Shipping/>}/>
             <Route path='/orders' element={<Orders/>}/>
+            <Route path='/addresses' element={<MyAddresses/>}/>
+            <Route path='/createAddress' element={<NewAddress/>}/>
+            <Route path='/manageAddress/:id' element={<AddressManagement/>}/>
             <Route path='/orderDetails/:id' element={<OrderDetails/>}/>
+            <Route path='/viewInvoice/:id' element={<Invoice/>}/>
             <Route path='/pay' element={<Checkout/>}/>
           </Route>
           
@@ -107,13 +118,16 @@ const App = () => {
             <Route path="/admin/customer" element={<Customers />} />
             <Route path="/admin/transaction" element={<Transaction />} />
             <Route path="admin/coupon" element={<Coupons/>} />
+            <Route path="admin/deliveryRule" element={<DeliveryRules/>} />
+            <Route path="admin/systemSetting" element={<SystemSettings/>} />
             {/* Charts */}
             <Route path="/admin/chart/bar" element={<Barcharts />} />
             <Route path="/admin/chart/pie" element={<Piecharts />} />
             <Route path="/admin/chart/line" element={<Linecharts />} />
-            {/* Apps */}
-            <Route path="/admin/app/stopwatch" element={<Stopwatch />} />
-            <Route path="/admin/app/toss" element={<Toss />} />
+            {/* Site Configuration */}
+            <Route path="/admin/deliveryRule/new" element={<NewDeliveryRule />} />
+            <Route path="/admin/deliveryRule/:id" element={<DeliveryRuleManagement />} />
+            <Route path="admin/systemSetting/:id" element={<SystemSettingManagement/>} />
 
             {/* Management */}
             <Route path="/admin/coupon/new" element={<NewCoupon />} />

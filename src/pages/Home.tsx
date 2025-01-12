@@ -288,7 +288,7 @@ const Home = () => {
             >
               <div>{service.icon}</div>
               <section>
-                <h3>{service.title}Y</h3>
+                <h3>{service.title}</h3>
                 <p>{service.title}</p>
               </section>
             </motion.li>

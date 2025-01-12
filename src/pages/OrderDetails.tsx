@@ -1,11 +1,15 @@
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import {  useOrderDetailsQuery } from "../redux/api/orderAPI";
 import { OrderItemType, OrderType } from "../types/types";
 import { Skeleton } from "../components/Loader";
 
 const defaultData: OrderType = {
   shippingInfo: {
+    name: "",
+    primaryPhone: "",
+    secondaryPhone: "",
     address: "",
+    address2: "",
     city: "",
     state: "",
     country: "",
@@ -16,42 +20,50 @@ const defaultData: OrderType = {
     _id: "",
   },
   _id: "",
+  createdAt: "",
   status: "",
-    subtotal: 0,
-    discount: 0,
-    shippingCharges: 0,
-    tax: 0,
-    total: 0,
-    orderItems: [],
+  subtotal: 0,
+  discount: 0,
+  shippingCharges: 0,
+  tax: 0,
+  total: 0,
+  orderItems: [],
 }
 
 const OrderDetails = () => {
-  const params = useParams( );
+  const params = useParams();
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type"); // Determines whether it's confirmation or details
   const { data, isLoading, isError } = useOrderDetailsQuery( params.id! );
 
   const {
-    shippingInfo: { address, city, state,country, pinCode },
+    shippingInfo: { name, primaryPhone, secondaryPhone, address, address2, city, state, pinCode, country },
     orderItems,
-    user: {name},
     status,
     subtotal,
     discount,
     shippingCharges,
     tax,
-    total
+    total,
+    _id
   } = data?.order || defaultData;
 
   if( isError ) return <Navigate to={"/404"}/>;
 
   return (
-    <div className="container">
-      <main className="product-management">
-        { isLoading? <Skeleton length={20}/> : <>
-          <section
+    <div className={`container ${type === "confirmation" ? "confirmation" : ""}`}>
+      { isLoading? <Skeleton length={20}/> : <>
+        {type === "confirmation" && (
+          <section className="confirmation-banner">
+            <h1>Thank you for your order!</h1>
+            <p>Your order has been placed successfully.</p>
+          </section>
+        )}
+        <main className="product-management">
+          <section 
             style={{
               padding: "2rem",
-            }}
-          >
+            }}>
             <h2>Order Items</h2>
 
             {orderItems.map((i) => (
@@ -72,8 +84,9 @@ const OrderDetails = () => {
             <h1>Order Info</h1>
             <h5>User Info</h5>
             <p>Name: {name}</p>
+            <p>Phone No: {`${primaryPhone}${secondaryPhone ? `, ${secondaryPhone}` : ""}`}</p>
             <p>
-              Address: {`${address}, ${city}, ${state}, ${country} ${pinCode}`}
+              Address: {`${address}, ${address2 ? address2 : ""}${address2 && address2.length > 0 ? ", " : ""}${city}, ${state} ${pinCode} ${country.toUpperCase()}`}
             </p>
             <h5>Amount Info</h5>
             <p>Subtotal: {subtotal}</p>
@@ -97,9 +110,12 @@ const OrderDetails = () => {
                 {status}
               </span>
             </p>
+            { status === "Delivered" && <Link className="view-invoice-btn" to ={`/viewInvoice/${_id}`}>
+              View Invoice
+            </Link> }
           </article>
-        </> }
-      </main>
+        </main>
+      </> }
     </div>
   );
 };

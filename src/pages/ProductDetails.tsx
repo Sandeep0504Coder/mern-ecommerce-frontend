@@ -2,9 +2,9 @@ import { useAddEditReviewMutation, useAllReviewsOfProductQuery, useDeleteReviewM
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/reducer/cartReducer";
+import { addToCart, modifySelectedShippingAddress } from "../redux/reducer/cartReducer";
 import toast from "react-hot-toast";
-import { CartItemType, review } from "../types/types";
+import { Address, CartItemType, review } from "../types/types";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { MyntraCarousel, Slider, CarouselButtonType, useRating  } from "6pp";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
@@ -15,6 +15,8 @@ import { responseToast } from "../utils/features";
 import { FaRegStar, FaStar, FaTrash } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
 import { useSearchParams } from "react-router-dom";
+import { useMyAddressesQuery } from "../redux/api/userAPI";
+import { __DO_NOT_USE__ActionTypes } from "@reduxjs/toolkit";
 
 const ProductDetails = () => {
     const dispatch = useDispatch( );
@@ -22,7 +24,7 @@ const ProductDetails = () => {
     const searchQuery = useSearchParams()[0];
     const navigate = useNavigate( );
     const { user } = useSelector( ( state: RootState ) => state.userReducer );
-    const { cartItems } = useSelector( ( state: RootState ) => state.cartReducer );
+    const { cartItems, selectedShippingAddressId } = useSelector( ( state: RootState ) => state.cartReducer );
     const [ selectedVariantId ] = useState<string>( searchQuery.get( "variantId" ) || "" );
     const [ itemQuantity, setItemQuantity ] = useState<number>( 1 );
     const [ carouselOpen, setCarouselOpen ] = useState<boolean>( false );
@@ -30,11 +32,28 @@ const ProductDetails = () => {
     const [ itemPresentInCart, setItemPresentInCart ] = useState<boolean>( false );
     const [ reviewComment, setReviewComment ] = useState<string>( "" );
     const [selectedConfig, setSelectedConfig] = useState<Record<string, string>>({});
+    const [selectedAddress, setSelectedAddress] = useState<Address>({
+        _id: "",
+        name: "",
+        primaryPhone: "",
+        secondaryPhone: "",
+        address: "",
+        address2: "",
+        city: "",
+        state: "",
+        country: "",
+        pinCode: "",
+        user: "",
+        isDefault: false,
+    });
     const reviewDialogRef = useRef<HTMLDialogElement>( null );
+    const selectDeliveryAddressRef = useRef<HTMLDialogElement>( null );
 
     const { data, isLoading, isError } = useProductDetailsQuery( params.id! );
 
     const reviewsResponse = useAllReviewsOfProductQuery( params.id! );
+
+    const myAddressesResponse = useMyAddressesQuery( user?._id! );
 
     const [ addEditReview ] = useAddEditReviewMutation( );
 
@@ -199,6 +218,22 @@ const ProductDetails = () => {
         setReviewComment( "" );
     }
 
+    const closeSelectAddressDialog = ( ) => {
+        selectDeliveryAddressRef.current?.close( );
+    }
+
+    const handleSelectedAddressChange = ( addressId: string ) => {
+        dispatch( modifySelectedShippingAddress( addressId ) );
+
+        let selectedAddress = myAddressesResponse.data?.addresses.filter( ( address ) => address._id == addressId );
+
+        if( selectedAddress ){
+            setSelectedAddress( selectedAddress[0] );
+        }
+
+        closeSelectAddressDialog();
+    };
+
     const addEditReviewHandler = async (e: FormEvent<HTMLFormElement> ) => {
         e.preventDefault( );
         reviewDialogRef.current?.close( );
@@ -241,6 +276,10 @@ const ProductDetails = () => {
         reviewDialogRef.current?.showModal( );
     }
 
+    const showSelectAddressDialog = ( ) => {
+        selectDeliveryAddressRef.current?.showModal( );
+    }
+
     useEffect( function( ){
         variants[0]?.configuration.forEach( ( config ) => {
             handleConfigurationChange( config.key, config.value );
@@ -255,11 +294,30 @@ const ProductDetails = () => {
         }
     },[ selectedVariantId, variants ] );
 
+    useEffect( function( ){
+        // dispatch( modifySelectedShippingAddress( "" ) )
+        if( "data" in myAddressesResponse ){
+            if( selectedShippingAddressId.length > 0 ){
+                var selectedAddress = myAddressesResponse.data?.addresses.filter( ( address ) =>  address._id == selectedShippingAddressId );
+
+                if( selectedAddress && selectedAddress.length > 0 ){
+                    setSelectedAddress( selectedAddress[0] );
+                }
+            } else {
+                var defaultAddress = myAddressesResponse.data?.addresses.filter( ( address ) => address.isDefault );
+
+                if( defaultAddress && defaultAddress.length > 0 ){
+                    setSelectedAddress( defaultAddress[0] );
+                }
+            }
+        }
+    },[ myAddressesResponse?.data ] );
+
     if( isError ) return <Navigate to={"/404"}/>;
 
     return (
         <div className="product-details">
-            { ( isLoading || configChangeLoding ) ? <ProductLoader/> : (
+            { ( isLoading || configChangeLoding || myAddressesResponse.isLoading ) ? <ProductLoader/> : (
                 <>
                     <main>
                         <section>
@@ -306,9 +364,9 @@ const ProductDetails = () => {
                             </article>
                             <h3>${filteredVariant?.price || price}</h3>
                             {Object.entries(configurations).map(([key, values]) => (
-                                <div key={key} style={{ display: "flex", flexDirection: "row", justifyContent: "start", marginBottom: "1rem" }}>
-                                    <label style={{width: "7rem",  marginRight: "2rem"}}><b>{key.toUpperCase()}</b></label>
-                                    <div style={{ display: "flex", gap: "1rem" }}>
+                                <div key={key} className="productDetailsElement">
+                                    <label className="variantConfigLabel"><b>{key.toUpperCase()}</b></label>
+                                    <div className="variantConfigValues">
                                         {values.map((value) => {
                                             const isSelected = selectedConfig[key] === value;
                                             return (
@@ -328,9 +386,21 @@ const ProductDetails = () => {
                                     </div>
                                 </div>
                             ))}
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "start", marginBottom: "1rem" }}>
-                                <label style={{width: "7rem", marginRight: "2rem"}}><b>Description</b></label>
-                                <div>{description}</div>
+                            {
+                                user !== null && selectedAddress._id != "" && (
+                                    <div className="productDetailsElement">
+                                        <label className="deliveryLabel"><b>Deliver to: </b></label>
+                                        <div className="selected-delivery-address">
+                                            <p style={{marginTop: 0, fontWeight:500}}>{`${selectedAddress.name}, ${selectedAddress.pinCode}`}</p>
+                                            <p>{`${selectedAddress.address}, ${selectedAddress.address2} ${selectedAddress.address2.length ? "," : ""} ${selectedAddress.city}, ${selectedAddress.state}`}</p>
+                                        </div>
+                                        <button className="addressChangeBtn" onClick={showSelectAddressDialog}>Change</button>
+                                    </div>
+                                )
+                            }
+                            <div className="productDetailsElement">
+                                <label className="descriptionLabel"><b>Description: </b></label>
+                                <div className="productDescription">{description}</div>
                             </div>
                         </section>
                     </main>
@@ -347,6 +417,33 @@ const ProductDetails = () => {
                         Submit
                     </button>
                 </form>
+            </dialog>
+            <dialog ref={selectDeliveryAddressRef} className="review-dialog">
+                <button onClick={closeSelectAddressDialog}>X</button>
+                <h2>Select Delivery Address</h2>
+                { myAddressesResponse.isLoading ? <></> : (
+                    <div>
+                        {myAddressesResponse.data?.addresses.map(( { _id, name, pinCode, address, address2, city, state, isDefault } ) => {
+                            let isSelected = selectedShippingAddressId.length > 0 ? selectedShippingAddressId === _id : isDefault;
+                            
+                            return (
+                            <label key={_id} style={{ display: "flex", gap: "0.5rem", borderWidth: "2px", borderColor: "black", borderStyle: "solid", justifyContent: "center", cursor: "pointer", padding: "1rem", flexDirection: "column",
+                                margin: "1rem 0", borderRadius: "0.5rem",  border: `2px solid ${isSelected ? "blue" : "black"}`,
+                                color: isSelected ? "blue" : "black", }}>
+                                <input
+                                    type="radio"
+                                    name="shippingAddress"
+                                    value={_id}
+                                    checked={isSelected}
+                                    onChange={() => handleSelectedAddressChange(_id)}
+                                    style={{ position: "absolute", clip: "rect(0, 0, 0, 0)"}}
+                                />
+                                <p style={{marginTop: 0, fontWeight:500}}>{`${name}, ${pinCode}`}</p>
+                                <p>{`${address}, ${address2} ${address2.length ? "," : ""} ${city}, ${state}`}</p>
+                            </label>
+                        )})}
+                    </div>
+                ) }
             </dialog>
             <section>
                 <article>

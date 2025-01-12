@@ -63,8 +63,7 @@ const CheckoutForm = () => {
         if( paymentIntent.status === "succeeded" ){
             const res = await newOrder( orderData );
             dispatch( resetCart() );
-            responseToast( res, navigate, "/orders" );
-            navigate( "/orders" );
+            responseToast( res, navigate, `/orderDetails/${res.data?.orderId}?type=confirmation` );
         }
 
         setIsProcessing( false );

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
 import { useFileHandler } from "6pp";
 import { ProductVariantType, Configuration } from "../../../types/types";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
 
 const NewProduct = () => {
   const [name, setName] = useState<string>("");
@@ -19,20 +20,7 @@ const NewProduct = () => {
   const { user } = useSelector( ( state: RootState ) => state.userReducer );
   const [ isLoading, setIsLoading ] = useState<boolean>( false );
   const photos = useFileHandler( "multiple", 10, 5 );
-  const [ variants, setVariants ] = useState<ProductVariantType[]>(
-    [
-      {
-        configuration: [
-          {
-            key: "",
-            value: ""
-          }
-        ],
-        price: 0,
-        stock: 0
-      }
-    ]
-  );
+  const [ variants, setVariants ] = useState<ProductVariantType[]>( [] );
 
   const handleVariantConfigChange = (variantIndex: number, configIndex: number, field: keyof Configuration, value: string) => {
     const updatedVariants = [ ...variants ];
@@ -40,9 +28,28 @@ const NewProduct = () => {
     setVariants( updatedVariants );
   };
 
+  const removeVariantConfig = ( variantIndex: number, configIndex: number ) => {
+    const updatedVariants = [ ...variants ];
+    updatedVariants[variantIndex].configuration = updatedVariants[variantIndex].configuration.filter( ( config, index ) => {
+      console.log( config );
+      return index !== configIndex;
+    } );
+    setVariants( updatedVariants );
+  };
+
   const handleVariantChange = (variantIndex: number, field: "stock" | "price", value: number) => {
     const updatedVariants = [ ...variants ];
     updatedVariants[variantIndex][field] = value;
+    setVariants( updatedVariants );
+  };
+
+  const removeVariant = ( variantIndex: number ) => {
+    let updatedVariants = [ ...variants ];
+    updatedVariants = updatedVariants.filter( ( variant, index ) => {
+      console.log( variant );
+
+      return index !== variantIndex;
+    } );
     setVariants( updatedVariants );
   };
 
@@ -177,6 +184,9 @@ const NewProduct = () => {
                                 required
                             />
                           </div>
+                          <button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
+                          <IoIosRemoveCircleOutline />
+                        </button>
                       </div>
                   ))}
                   <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
@@ -189,6 +199,9 @@ const NewProduct = () => {
                       <label>Stock</label>
                     <input type="number" placeholder="Stock" value={variant.stock} onChange={(e) => handleVariantChange(variantIndex, "stock", Number(e.target.value))} required />
                     </div>
+                    <button className="remove-variant" onClick={( ) => removeVariant( variantIndex )}>
+                      <IoIosRemoveCircleOutline />
+                    </button>
                   </div>
               </div>
             ))}
