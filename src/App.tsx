@@ -11,6 +11,7 @@ import { getUser } from './redux/api/userAPI'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { RootState } from './redux/store'
 import Footer from './components/Footer'
+import HomePageManager from './pages/HomePageManager'
 
 const Home = lazy( ( ) => import( "./pages/Home" ) )
 const Cart = lazy( ( ) => import( "./pages/Cart" ) )
@@ -34,12 +35,18 @@ const Transaction = lazy(() => import("./pages/admin/transaction"));
 const Coupons = lazy(() => import("./pages/admin/Coupons"));
 const DeliveryRules = lazy(() => import("./pages/admin/DeliveryRules"));
 const SystemSettings = lazy(() => import("./pages/admin/SystemSettings"));
+const Regions = lazy(() => import('./pages/admin/Regions'));
 const Barcharts = lazy(() => import("./pages/admin/charts/BarChats"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));
 const Linecharts = lazy(() => import("./pages/admin/charts/linecharts"));
 const NewCoupon = lazy(() => import("./pages/admin/management/NewCoupon"));
 const NewProduct = lazy(() => import("./pages/admin/management/newproduct"));
 const NewDeliveryRule = lazy(() => import("./pages/admin/management/NewDeliveryRule"));
+const NewRegion = lazy(() => import("./pages/admin/management/NewRegion"));
+const NewState = lazy(() => import('./pages/admin/management/NewState'));
+const RegionManagement = lazy(() => import("./pages/admin/management/RegionManagement"));
+const HomePageManagement = lazy(() => import('./pages/admin/management/HomePageManagement'));
+const StateManagement = lazy(() => import('./pages/admin/management/StateManagement'));
 const DeliveryRuleManagement = lazy(() => import('./pages/admin/management/DeliveryRuleManagement'));
 const SystemSettingManagement = lazy(() => import('./pages/admin/management/SystemSettingManagement'));
 const ProductManagement = lazy(
@@ -120,6 +127,8 @@ const App = () => {
             <Route path="admin/coupon" element={<Coupons/>} />
             <Route path="admin/deliveryRule" element={<DeliveryRules/>} />
             <Route path="admin/systemSetting" element={<SystemSettings/>} />
+            <Route path="admin/region" element={<Regions/>} />
+            <Route path="admin/homePageContent" element={<HomePageManager/>} />
             {/* Charts */}
             <Route path="/admin/chart/bar" element={<Barcharts />} />
             <Route path="/admin/chart/pie" element={<Piecharts />} />
@@ -128,6 +137,11 @@ const App = () => {
             <Route path="/admin/deliveryRule/new" element={<NewDeliveryRule />} />
             <Route path="/admin/deliveryRule/:id" element={<DeliveryRuleManagement />} />
             <Route path="admin/systemSetting/:id" element={<SystemSettingManagement/>} />
+            <Route path="admin/region/new" element={<NewRegion/>} />
+            <Route path="admin/region/addState/:id" element={<NewState/>} />
+            <Route path="admin/region/manageState/regionId/:regionId/stateId/:stateId" element={<StateManagement/>} />
+            <Route path="admin/region/:id" element={<RegionManagement/>} />
+            <Route path="admin/homePageContent/:id" element={<HomePageManagement/>} />
 
             {/* Management */}
             <Route path="/admin/coupon/new" element={<NewCoupon />} />

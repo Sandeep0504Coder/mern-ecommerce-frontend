@@ -23,7 +23,7 @@ const ProductCard = ({productId, photos, name,price,stock, variants, handler}:Pr
     if( index == 0 ){
       selectedConfigName += " ( ";
     }
-    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" && config.key.toUpperCase() != "DISPLAY SIZE" ? config.key.toUpperCase( ) : ""}`;
 
     if( index != variants[0].configuration.length - 1 ){
       selectedConfigName += ", "; 

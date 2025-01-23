@@ -76,6 +76,17 @@ export type DeliveryRule = {
     setDeliveryFeeTo: string;
 };
 
+export type Region = {
+    _id: string;
+    countryName: string;
+    countryAbbreviation: string;
+    states: {
+        _id: string;
+        stateName: string;
+        stateAbbreviation: string;
+    }[]
+};
+
 export type SystemSetting = {
     _id: string;
     settingCategory: string;
@@ -85,6 +96,16 @@ export type SystemSetting = {
     entityId: string;
     entityDetails: string;
 };
+
+export type HomePageContent = {
+    promotionalText: string;
+    banners: {
+        public_id: string;
+        url: string;
+    }[];
+    _id: string;
+    productSections: ProductSectionType[];
+}
 
 export type SystemSettingDetail = {
     _id: string;
@@ -145,6 +166,11 @@ export interface ProductUpdateFormData {
     stockUpdate: number;
     descriptionUpdate: string;
     variantsUpdate: ProductVariantType[];
+}
+
+export type HomePageContentUpdateFormData = {
+    productSectionsUpdate: ProductSectionType[];
+    promotionalTextUpdate: string;
 }
 
 export type CreateAddressFormData = {
@@ -269,7 +295,31 @@ export type ProductVariantType = {
     _id?: string;
 }
 
+export type ProductSectionType = {
+    filters: Filter[];
+    sectionLabel: string;
+    _id?: string;
+    products?: ProductType[];
+}
+
+type ProductType = {
+    name: string;
+    photos: {
+        public_id: string;
+        url: string;
+    }[];
+    category: string;
+    price: number;
+    _id: string;
+    variants: ProductVariantType[];
+    stock: number;
+}
 export interface Configuration {
+    key: string;
+    value: string;
+}
+
+export interface Filter {
     key: string;
     value: string;
 }
@@ -283,6 +333,16 @@ export type CreateDeliveryRuleFormData = {
     setDeliveryFeeTo: string;
 }
 
+export type CreateRegionFormData = {
+    countryName: string;
+    countryAbbreviation: string;
+}
+
+export type ManageStateFormData = {
+    stateName: string;
+    stateAbbreviation: string;
+}
+
 export type UpdateDeliveryRuleFormData = {
     ruleNameUpdate: string;
     subtotalMinRangeUpdate: number;
@@ -290,6 +350,16 @@ export type UpdateDeliveryRuleFormData = {
     amountUpdate: number;
     percentageUpdate: number;
     setDeliveryFeeToUpdate: string;
+}
+
+export type UpdateRegionFormData = {
+    countryNameUpdate: string;
+    countryAbbreviationUpdate: string;
+}
+
+export type UpdateStateFormData = {
+    stateNameUpdate: string;
+    stateAbbreviationUpdate: string;
 }
 
 export type UpdateSystemSettingFormData = {

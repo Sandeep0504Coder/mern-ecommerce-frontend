@@ -58,13 +58,13 @@ const ProductRecommendationManagement = () => {
       }
     };
 
-  if( isError && productResponseIsError ) return <Navigate to={"/404"}/>;
+  if( isError || productResponseIsError ) return <Navigate to={"/404"}/>;
 
   return (
     <div className="admin-container">
       <AdminSidebar />
       <main className="product-management">
-        {isLoading && productResonseIsLoading ? <Skeleton length={20}/> : (
+        {isLoading || productResonseIsLoading ? <Skeleton length={20}/> : (
           <>
             <article>
               <h2>Manage Suggested Items</h2>

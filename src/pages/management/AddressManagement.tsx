@@ -8,21 +8,7 @@ import { useAddressDetailsQuery, useDeleteAddressMutation, useUpdateAddressMutat
 import { Skeleton } from "../../components/Loader";
 import { FaTrash } from "react-icons/fa";
 import { modifySelectedShippingAddress } from "../../redux/reducer/cartReducer";
-
-const countryOptions = [
-  {
-      id: "ind",
-      country: "India"
-  },
-  {
-      id: "usa",
-      country: "United States Of America"
-  },
-  {
-      id: "aus",
-      country: "Australia"
-  }
-]
+import { useAllRegionsQuery } from "../../redux/api/regionAPI";
 
 const AddressManagement = () => {
   const navigate = useNavigate();
@@ -32,8 +18,11 @@ const AddressManagement = () => {
   const { selectedShippingAddressId } = useSelector( ( state: RootState ) => state.cartReducer );
   const [ btnLoading, setBtnLoading ] = useState<boolean>( false );
   const  { data, isLoading, isError } = useAddressDetailsQuery( params.id! );
+  const { data: allRegionsData, isLoading: allRegionRequestLoading , isError: allRegionRequestIsError } = useAllRegionsQuery( user?._id! );
   const [ updateAddress ] = useUpdateAddressMutation( );
   const [ deleteAddress ] = useDeleteAddressMutation( );
+  const [ selectedCountryAbbr, setSelectedCountryAbbr ] = useState<string>( "" );
+  const [ stateOptions, setStateOptions ] = useState<{stateName: string; stateAbbreviation: string}[]>( [] );
 
   const [ deliveryAddressUpdate, setDeliveryAddressUpdate ] = useState<UpdateAddressFormData>( {
     nameUpdate: "",
@@ -125,15 +114,29 @@ const AddressManagement = () => {
         pinCodeUpdate: data.address.pinCode || "",
         isDefaultUpdate:  data.address.isDefault || false
       } );
+
+      setSelectedCountryAbbr( data.address.country );
     }
   }, [ data ] );
 
-  if( isError ) return <Navigate to={"/404"}/>;
+  useEffect( () => {
+    if( allRegionsData && allRegionsData.regions ){
+      const stateOptionsByRegionAbbr = allRegionsData.regions.filter( (region) => region.countryAbbreviation == selectedCountryAbbr );
+
+      if( stateOptionsByRegionAbbr && stateOptionsByRegionAbbr.length > 0 ){
+        setStateOptions(stateOptionsByRegionAbbr[0].states );
+      } else {
+        setStateOptions( [] );
+      }
+    }
+  }, [ selectedCountryAbbr, allRegionsData ] );
+
+  if( isError || allRegionRequestIsError ) return <Navigate to={"/404"}/>;
 
   return (
     <div className="create-address-container">
       <main className="address-management">
-        {isLoading ? <Skeleton length={20}/> :
+        {isLoading || allRegionRequestLoading ? <Skeleton length={20}/> :
           <article>
             <button className="product-delete-btn" onClick={deleteAddressHandler}>
               <FaTrash />
@@ -219,22 +222,19 @@ const AddressManagement = () => {
             </div>
 
             <div>
-              <label>State*</label>
-              <input
-                type="text"
-                name="stateUpdate"
-                placeholder="State"
-                required
-                value={stateUpdate}
-                onChange={changeInputHandler}
-              />
+              <select name="stateUpdate" required value={stateUpdate} onChange={changeInputHandler}>
+                <option key={""} value="">Select State</option>
+                {stateOptions.map( ( state, index ) => (
+                  <option key={index} value={state.stateAbbreviation}>{state.stateName}</option>
+                ) )}
+              </select>
             </div>
 
             <div>
-              <select name="countryUpdate" required value={countryUpdate} onChange={changeInputHandler}>
+              <select name="countryUpdate" required value={countryUpdate} onChange={(e)=>{setSelectedCountryAbbr(e.target.value);changeInputHandler(e);}}>
                 <option key={""} value="">Select Country</option>
-                {countryOptions.map( ( countryOption ) => (
-                  <option key={countryOption.id} value={countryOption.id}>{countryOption.country}</option>
+                {allRegionsData?.regions.map( ( region ) => (
+                  <option key={region._id} value={region.countryAbbreviation}>{region.countryName}</option>
                 ) )}
               </select>
             </div>

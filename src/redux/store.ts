@@ -10,6 +10,8 @@ import { dashboardApi } from "./api/dashboardAPI";
 import { couponAPI } from "./api/couponAPI";
 import { deliveryRuleAPI } from "./api/deliveryRuleAPI";
 import { systemSettingAPI } from "./api/systemSettingAPI";
+import { regionAPI } from "./api/regionAPI";
+import { homePageContentAPI } from "./api/homePageContentAPI";
 
 export const server = import.meta.env.VITE_SERVER;
 
@@ -30,6 +32,8 @@ export const store = configureStore( {
         [ dashboardApi.reducerPath ]: dashboardApi.reducer,
         [ deliveryRuleAPI.reducerPath ]: deliveryRuleAPI.reducer,
         [ systemSettingAPI.reducerPath ]: systemSettingAPI.reducer,
+        [ regionAPI.reducerPath ]: regionAPI.reducer,
+        [ homePageContentAPI.reducerPath ]: homePageContentAPI.reducer,
         [ couponAPI.reducerPath ]: couponAPI.reducer,
         [ userReducer.name ]: userReducer.reducer,
         [ cartReducer.name ]: persistedCartReducer, // Use the persisted reducer for cart
@@ -42,6 +46,8 @@ export const store = configureStore( {
         deliveryRuleAPI.middleware,
         systemSettingAPI.middleware,
         couponAPI.middleware,
+        regionAPI.middleware,
+        homePageContentAPI.middleware
     ] ),
 } );
 

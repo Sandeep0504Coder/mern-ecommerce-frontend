@@ -1,4 +1,4 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review, Address, CreateAddressFormData, DeliveryRule, CreateDeliveryRuleFormData, SystemSetting, SystemSettingDetail, SystemSettingValueDetail } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review, Address, CreateAddressFormData, DeliveryRule, CreateDeliveryRuleFormData, SystemSetting, SystemSettingDetail, SystemSettingValueDetail, Region, CreateRegionFormData, ManageStateFormData, ProductSectionType, HomePageContent } from "./types";
 
 export type MessageResponse = {
     success: boolean;
@@ -99,6 +99,11 @@ export type DeliveryRuleResponse = {
     deliveryRules: DeliveryRule[];
 }
 
+export type RegionResoponse = {
+    success: boolean;
+    regions: Region[];
+}
+
 export type SystemSettingResponse = {
     success: boolean;
     systemSettings: SystemSetting[];
@@ -117,6 +122,21 @@ export type SystemSettingDetailByUniqueNameResponse = {
 export interface DeliveryRuleDetailsResponse{
     success: boolean;
     deliveryRule: DeliveryRule;
+}
+
+export type RegionDetailsResponse = {
+    success: boolean;
+    region: Region;
+}
+
+export type HomePageContentResponse = {
+    success: boolean;
+    homePageContents: HomePageContent[];
+}
+
+export interface HomePageContentDetailsResponse{
+    success: boolean;
+    homePageContent: HomePageContent;
 }
 
 export interface SearchProductRequest{
@@ -211,6 +231,18 @@ export type CreateDeliveryRuleRequest = {
     deliveryRuleData: CreateDeliveryRuleFormData;
 }
 
+export type CreateRegionRequest = {
+    id: string;
+    regionData: CreateRegionFormData;
+}
+
+export type ManageStateRequest = {
+    id: string;
+    regionId: string;
+    stateId: string;
+    stateData: ManageStateFormData;
+}
+
 export type UpdateSystemSettingRequest = {
     userId: string;
     systemSettingId: string;
@@ -218,4 +250,10 @@ export type UpdateSystemSettingRequest = {
         entityId: string;
         settingValue: string;
     };
+}
+
+export type UpdateHomePageContentRequest = {
+    userId: string;
+    homePageContentId: string;
+    formData: FormData;
 }

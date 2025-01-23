@@ -72,11 +72,11 @@ const Cart = () => {
     }
   }, [couponCode, deliveryFeeData, taxRateData])
 
-  if( deliveryFeeError && taxRateError ) return <Navigate to={"/404"}/>;
+  if( deliveryFeeError || taxRateError ) return <Navigate to={"/404"}/>;
 
   return (
     <div className="cart">
-      { ( deliveryFeeLoading && taxRateLoading ) ?  <Skeleton length={20}/> : <>
+      { ( deliveryFeeLoading || taxRateLoading ) ?  <Skeleton length={20}/> : <>
         <main>
           {cartItems.length > 0 ? (
             cartItems.map((item, index)=>(

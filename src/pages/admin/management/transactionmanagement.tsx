@@ -154,7 +154,7 @@ const ProductCard = ({
       selectedConfigName += " ( ";
     }
 
-    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+    selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" && config.key.toUpperCase() != "DISPLAY SIZE" ? config.key.toUpperCase( ) : ""}`;
 
     if( index != variant.configuration.length - 1 ){
       selectedConfigName += ", "; 

@@ -32,6 +32,22 @@ export const cartReducer = createSlice( {
     reducers: {
         addToCart: ( state, action: PayloadAction<CartItemType & { updateItemIfFound: boolean; }> ) => {
             state.loading = true;
+            let selectedConfigName = "";
+                action.payload.variant?.configuration?.forEach( ( config, index )=> {
+                if( index == 0 ){
+                  selectedConfigName += " ( ";
+                }
+            
+                selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" && config.key.toUpperCase() != "DISPLAY SIZE" ? config.key.toUpperCase( ) : ""}`;
+            
+                if( action.payload.variant ){
+                    if( index != action.payload.variant?.configuration.length - 1 ){
+                        selectedConfigName += ", "; 
+                    } else {
+                        selectedConfigName += " )";
+                    }
+                }
+              } );
 
             // Check if the product with the same variant already exists
             const existingItemIndex = state.cartItems.findIndex( ( item ) => {
@@ -42,6 +58,8 @@ export const cartReducer = createSlice( {
                         return true;
                     }
                 }
+
+                return false;
             } );
 
             if( existingItemIndex !== -1 ){
@@ -55,9 +73,9 @@ export const cartReducer = createSlice( {
                         stock: action.payload.stock,
                         variant: action.payload.variant,
                     };
-                    toast.success( `${action.payload.name} updated.` );
+                    toast.success( `${action.payload.name}${selectedConfigName} updated.` );
                 } else {
-                    toast( `${action.payload.name} already present in the cart please check the cart to update the item.` );
+                    toast( `${action.payload.name}${selectedConfigName} already present in the cart please check the cart to update the item.` );
                 }
             } else {
                 state.cartItems.push( {
@@ -70,7 +88,7 @@ export const cartReducer = createSlice( {
                     variant: action.payload.variant,
                 } );
 
-                toast.success( `${action.payload.name} added to cart.` )
+                toast.success( `${action.payload.name}${selectedConfigName} added to cart.` )
             }
         
             state.loading = false;

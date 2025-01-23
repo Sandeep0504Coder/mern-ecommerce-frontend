@@ -14,8 +14,10 @@ import {
   RiDashboardFill,
   RiShoppingBag3Fill,
 } from "react-icons/ri";
+import { TbLocationCog } from "react-icons/tb";
 import { Link, Location, useLocation } from "react-router-dom";
 import { IconType } from "react-icons";
+import { BiLayout } from "react-icons/bi";
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -149,8 +151,20 @@ const DivThree = ({ location }: { location: Location }) => (
       />
       <Li
         url="/admin/systemSetting"
-        text="System Settings"
+        text="Settings"
         Icon={GrSystem}
+        location={location}
+      />
+      <Li
+        url="/admin/region"
+        text="Region Management"
+        Icon={TbLocationCog}
+        location={location}
+      />
+      <Li
+        url="/admin/homePageContent"
+        text="Home Page Manager"
+        Icon={BiLayout}
         location={location}
       />
     </ul>

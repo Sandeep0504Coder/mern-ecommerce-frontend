@@ -70,7 +70,7 @@ const SystemSettings = () => {
     columns,
     rows,
     "dashboard-product-box",
-    "System Settings",
+    "Settings",
     rows.length > 6
   )();
 

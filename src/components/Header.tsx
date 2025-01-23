@@ -6,8 +6,9 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import toast from "react-hot-toast";
 import Badge from '@mui/material/Badge';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { resetCart } from "../redux/reducer/cartReducer";
 interface HeaderPropsType{
     user: User | null;
 
@@ -16,10 +17,12 @@ interface HeaderPropsType{
 const Header = ( { user }: HeaderPropsType ) => {
     const [ isOpen, setIsOpen ] = useState<boolean>(false);
     const { cartItems } = useSelector( ( state: RootState ) => ( state.cartReducer ) );
+    const dispatch = useDispatch();
     const logOutHandler = async() =>{
         try{
             await signOut( auth );
             toast.success( "Sign out Successfully" );
+            dispatch(resetCart());
             setIsOpen( false );
         } catch( e ){
             toast.error( "Sign Out Fail" );
@@ -29,6 +32,7 @@ const Header = ( { user }: HeaderPropsType ) => {
 
     return (
         <nav className="header">
+            <img style={{position: "absolute", left: "0.5rem", top: "1.5rem", width: "2rem", height: "2rem", borderRadius: "50%"}} src="/src/assets/images/logo2.jpg"/>
             <Link className="brandName" onClick={()=>{setIsOpen(false)}} to ="/">ShopSphere</Link>
             <Link onClick={()=>{setIsOpen(false)}} to ="/search"><FaSearch/></Link>
             <Badge badgeContent={cartItems.length} color="primary">

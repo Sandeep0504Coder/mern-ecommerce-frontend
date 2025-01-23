@@ -6,21 +6,7 @@ import { RootState } from "../../redux/store";
 import {  CreateAddressFormData } from "../../types/types";
 import { useCreatAddressMutation, useMyAddressesQuery } from "../../redux/api/userAPI";
 import { Skeleton } from "../../components/Loader";
-
-const countryOptions = [
-  {
-      id: "ind",
-      country: "India"
-  },
-  {
-      id: "usa",
-      country: "United States Of America"
-  },
-  {
-      id: "aus",
-      country: "Australia"
-  }
-]
+import { useAllRegionsQuery } from "../../redux/api/regionAPI";
 
 const NewAddress = () => {
   const navigate = useNavigate();
@@ -28,7 +14,8 @@ const NewAddress = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>( false );
   const  [ createAddress ] = useCreatAddressMutation();
 
-  const { data, isLoading: requestLoading , isError } = useMyAddressesQuery( user?._id! )
+  const { data, isLoading: requestLoading , isError } = useMyAddressesQuery( user?._id! );
+  const { data: allRegionsData, isLoading: allRegionRequestLoading , isError: allRegionRequestIsError } = useAllRegionsQuery( user?._id! );
 
   const [ deliveryAddress, setDeliveryAddress ] = useState<CreateAddressFormData>( {
       name: "",
@@ -42,6 +29,9 @@ const NewAddress = () => {
       pinCode: "",
       isDefault: false,
   } );
+
+  const [ selectedCountryAbbr, setSelectedCountryAbbr ] = useState<string>( "" );
+  const [ stateOptions, setStateOptions ] = useState<{stateName: string; stateAbbreviation: string}[]>( [] );
 
   const { name, primaryPhone, secondaryPhone, address, address2, city, state, country, pinCode, isDefault } = deliveryAddress;
 
@@ -92,13 +82,25 @@ const NewAddress = () => {
         setDeliveryAddress( { ...deliveryAddress, isDefault: true  } );
       }
     }, [ data ] );
+
+    useEffect( () => {
+      if( allRegionsData && allRegionsData.regions ){
+        const stateOptionsByRegionAbbr = allRegionsData.regions.filter( (region) => region.countryAbbreviation == selectedCountryAbbr );
+
+        if( stateOptionsByRegionAbbr && stateOptionsByRegionAbbr.length > 0 ){
+          setStateOptions(stateOptionsByRegionAbbr[0].states );
+        } else {
+          setStateOptions( [] );
+        }
+      }
+    }, [ selectedCountryAbbr ] );
   
-    if( isError ) return <Navigate to={"/404"}/>;
+    if( isError || allRegionRequestIsError ) return <Navigate to={"/404"}/>;
 
   return (
     <div className="create-address-container">
       <main className="address-management">
-        {requestLoading ? <Skeleton length={20}/> : <article>
+        {requestLoading || allRegionRequestLoading ? <Skeleton length={20}/> : <article>
           <form onSubmit={createAddressHandler}>
             <h2>New Address</h2>
             <div>
@@ -180,22 +182,19 @@ const NewAddress = () => {
             </div>
 
             <div>
-              <label>State*</label>
-              <input
-                type="text"
-                name="state"
-                placeholder="State"
-                required
-                value={state}
-                onChange={changeInputHandler}
-              />
+              <select name="state" required value={state} onChange={changeInputHandler}>
+                <option key={""} value="">Select State</option>
+                {stateOptions.map( ( state, index ) => (
+                  <option key={index} value={state.stateAbbreviation}>{state.stateName}</option>
+                ) )}
+              </select>
             </div>
 
             <div>
-              <select name="country" required value={country} onChange={changeInputHandler}>
+              <select name="country" required value={country} onChange={(e)=>{setSelectedCountryAbbr(e.target.value);changeInputHandler(e);}}>
                 <option key={""} value="">Select Country</option>
-                {countryOptions.map( ( countryOption ) => (
-                  <option key={countryOption.id} value={countryOption.id}>{countryOption.country}</option>
+                {allRegionsData?.regions.map( ( region ) => (
+                  <option key={region._id} value={region.countryAbbreviation}>{region.countryName}</option>
                 ) )}
               </select>
             </div>

@@ -16,7 +16,6 @@ import { FaRegStar, FaStar, FaTrash } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
 import { useSearchParams } from "react-router-dom";
 import { useMyAddressesQuery } from "../redux/api/userAPI";
-import { __DO_NOT_USE__ActionTypes } from "@reduxjs/toolkit";
 
 const ProductDetails = () => {
     const dispatch = useDispatch( );
@@ -115,7 +114,7 @@ const ProductDetails = () => {
             selectedConfigName += " ( ";
         }
         
-        selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+        selectedConfigName +=`${config.value.toUpperCase( )} ${!( config.key.toUpperCase() == "COLOR" || config.key.toUpperCase() == "DISPLAY SIZE" ) ? config.key.toUpperCase( ) : ""}`;
 
         if( index != filteredVariant.configuration.length - 1 ){
             selectedConfigName += ", "; 
@@ -182,6 +181,8 @@ const ProductDetails = () => {
                     return true;
                 }
             }
+
+            return false;
         } );
 
         if( existingItemIndex !== -1 ){
@@ -199,7 +200,7 @@ const ProductDetails = () => {
         return ( ) => {
             clearTimeout( timeOutId );
         }
-    }, [ filteredVariant ] );
+    }, [ data, filteredVariant ] );
 
     const addToCartHandler = ( cartItem: CartItemType ) => {
         if( cartItem.stock < 1 ) return toast.error( "Out of Stock." );
@@ -370,7 +371,7 @@ const ProductDetails = () => {
                                         {values.map((value) => {
                                             const isSelected = selectedConfig[key] === value;
                                             return (
-                                            <label key={value} style={{ display: "flex", gap: "0.5rem", borderWidth: "2px", borderColor: "black", borderStyle: "solid", justifyContent: "center", cursor: "pointer", width: "4rem", height: "2rem", borderRadius: "0.5rem",  border: `2px solid ${isSelected ? "blue" : "black"}`,
+                                            <label key={value} style={{ display: "flex", gap: "0.5rem", borderWidth: "2px", borderColor: "black", borderStyle: "solid", justifyContent: "center", cursor: "pointer", padding:"2px", minWidth: "4rem", height: "2rem", borderRadius: "0.5rem",  border: `2px solid ${isSelected ? "blue" : "black"}`,
                                             color: isSelected ? "blue" : "black", }}>
                                                 <input
                                                     type="radio"

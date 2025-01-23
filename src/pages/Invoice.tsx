@@ -100,7 +100,7 @@ const Invoice= () => {
                                           selectedConfigName += " ( ";
                                         }
                                     
-                                        selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" ? config.key.toUpperCase( ) : ""}`;
+                                        selectedConfigName +=`${config.value.toUpperCase( )} ${config.key.toUpperCase() != "COLOR" && config.key.toUpperCase() != "DISPLAY SIZE" ? config.key.toUpperCase( ) : ""}`;
                                     
                                         let variantConfigLen = item.variant?.configuration?.length || 0;
 

@@ -99,7 +99,7 @@
     }
     >a.brandName{
       position: absolute;
-      left: 1rem;
+      left: 3rem;
       color: $brandNameColor1;
       font-weight: 700;
       font-size: 2rem;
@@ -142,6 +142,8 @@
     max-width: 400px;
     width: 100%;
     margin: auto;
+    min-height: 400px;
+    margin-bottom: 2rem;
     >form{
       @include flex( column, flex-start, stretch, 2rem );
       >button{

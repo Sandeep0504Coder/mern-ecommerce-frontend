@@ -27,7 +27,7 @@ export const userAPI = createApi( {
             query: ( userId ) => `all?id=${userId}`,
             providesTags: [ "users" ]
         } ),
-        creatAddress: builder.mutation< MessageResponse, CreateAddressRequest >( {
+        creatAddress: builder.mutation< MessageResponse & {addressId: string;}, CreateAddressRequest >( {
             query: ( { id, addressData } ) => {
                 return {
                 url: `address/new?id=${id}`,

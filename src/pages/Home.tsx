@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom"
 import ProductCard from "../components/ProductCard"
-import { useAllCategoriesQuery, useLatestProductsQuery } from "../redux/api/productAPI"
+import { useAllCategoriesQuery } from "../redux/api/productAPI"
 import toast from "react-hot-toast"
 import { Skeleton } from "../components/Loader"
 import { CartItemType } from "../types/types"
@@ -13,6 +13,7 @@ import { Slider } from "6pp"
 import { motion } from "framer-motion";
 import videoCover from "../assets/videos/cover.mp4";
 import { FaAnglesDown } from "react-icons/fa6"
+import { useHeroSectionDetailsQuery } from "../redux/api/homePageContentAPI"
 
 const clients = [
   {
@@ -95,11 +96,6 @@ const clients = [
   },
 ];
 
-const banners = [
-  "https://res.cloudinary.com/dj5q966nb/image/upload/v1719253445/rmbjpuzctjdbtt8hewaz.png",
-  "https://res.cloudinary.com/dj5q966nb/image/upload/v1719253433/ticeufjqvf6napjhdiee.png",
-];
-
 const services = [
   {
     icon: <TbTruckDelivery />,
@@ -132,12 +128,7 @@ const Home = () => {
     } ) );
   }
   
-  const{ data, isLoading, isError } = useLatestProductsQuery( "" );
-
-  const coverMessage =
-    "Fashion isn't just clothes; it's a vibrant language. Silhouettes and textures speak volumes, a conversation starter with every bold print. It's a way to tell our story, a confidence booster, or a playful exploration. From elegance to rebellion, fashion lets us navigate the world in style.".split(
-      " "
-    );
+  const{ data, isLoading, isError } = useHeroSectionDetailsQuery( "" );
 
   if( isError ) toast.error( "Cannot fetch the products" );
   if( categorieResponseIsError ) toast.error( "Cannot fetch the categories" );
@@ -156,20 +147,20 @@ const Home = () => {
               ))}
             </ul>
           </aside>
-          <Slider
+          {isLoading ? <div style={{height: "135vh"}}><Skeleton width="70vw" containerHeight="100%" height="100%" length={1}/></div> : <Slider
             autoplay
             autoplayDuration={1500}
             showNav={false}
-            images={banners}
-          />
+            images={data?.homePageContent.banners.map( ( banner ) => banner.url ) || []}
+          />}
         </div>
-        <h1>
-          Latest Products
+        { isLoading ?<><div style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div><div style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div></> : data?.homePageContent.productSections.map(( productSection ) => (<>
+          <h1>
+          {productSection.sectionLabel}
           <Link to="/search" className="findmore">More</Link>
         </h1>
         <main>
-        {
-          isLoading ? <Skeleton width="80vw"/> : data?.products?.map( ( product ) => {
+          {productSection.products?.map( ( product ) => {
             return (
               <ProductCard
                 key={product._id}
@@ -182,9 +173,9 @@ const Home = () => {
                 handler={addToCartHandler}
               />
             )
-          } )
-        }
+          } )}
         </main>
+        </>))}
       </div>
       <article className="cover-video-container">
         <div className="cover-video-overlay"></div>
@@ -197,7 +188,7 @@ const Home = () => {
           >
             Fashion
           </motion.h2>
-          {coverMessage.map((el, i) => (
+          {data?.homePageContent.promotionalText.split( " " ).map((el, i) => (
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
