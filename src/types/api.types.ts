@@ -1,4 +1,4 @@
-import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review, Address, CreateAddressFormData, DeliveryRule, CreateDeliveryRuleFormData, SystemSetting, SystemSettingDetail, SystemSettingValueDetail, Region, CreateRegionFormData, ManageStateFormData, ProductSectionType, HomePageContent } from "./types";
+import { User, Product, CartItemType, ShippingInfo, OrderType, Stats, Pie, Line, Bar, Coupon, review, Address, CreateAddressFormData, DeliveryRule, CreateDeliveryRuleFormData, SystemSetting, SystemSettingDetail, SystemSettingValueDetail, Region, CreateRegionFormData, ManageStateFormData, HomePageContent } from "./types";
 
 export type MessageResponse = {
     success: boolean;
