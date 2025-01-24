@@ -177,6 +177,23 @@
       border: 1px solid rgba(212, 212, 212, 0.379);
     }
   }
+
+  .categorySkeleton {
+    flex-direction: row !important;
+    width: 100% !important;
+    gap: 0.25rem !important;
+  }
+
+  .bannerSkeleton {
+    width: 100% !important;
+  }
+
+  .productSkeleton {
+    padding-left: 0 !important;
+    >.skeleton-loader {
+      width: 88vw !important;
+    }
+  }
 }
 
 @media screen and (width<= 600px) {

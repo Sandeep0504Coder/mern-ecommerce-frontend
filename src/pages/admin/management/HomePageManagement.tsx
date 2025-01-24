@@ -164,7 +164,7 @@ const HomePageManagement = () => {
                           <label>Filter Value</label>
                           <input
                               type="text"
-                              placeholder="Filter Value (e.g., mobile, electronics appliances)"
+                              placeholder="Enter object in JSON format, number or string"
                               value={filter.value}
                               onChange={( e ) => handleProductSectionsFilterChange( productSectionIndex, filterIndex, "value", e.target.value )}
                               required

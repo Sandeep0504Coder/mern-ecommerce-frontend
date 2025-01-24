@@ -140,21 +140,21 @@ const Home = () => {
           <aside>
             <h1>Categories</h1>
             <ul>
-              { categorieResponseLoading ? <Skeleton width="10vw" length={10}/> : categorieResponse?.categories.map((category) => (
+              { categorieResponseLoading ? <Skeleton className="categorySkeleton" width="10vw" length={10}/> : categorieResponse?.categories.map((category) => (
                 <li key={category}>
                   <Link to={`/search?category=${category.toLowerCase()}`}>{category.toUpperCase( )}</Link>
                 </li>
               ))}
             </ul>
           </aside>
-          {isLoading ? <div style={{height: "135vh"}}><Skeleton width="70vw" containerHeight="100%" height="100%" length={1}/></div> : <Slider
+          {isLoading ? <div style={{height: "135vh"}}><Skeleton className="bannerSkeleton" width="70vw" containerHeight="100%" height="100%" length={1}/></div> : <Slider
             autoplay
             autoplayDuration={1500}
             showNav={false}
             images={data?.homePageContent.banners.map( ( banner ) => banner.url ) || []}
           />}
         </div>
-        { isLoading ?<><div style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div><div style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div></> : data?.homePageContent.productSections.map(( productSection ) => (<>
+        { isLoading ?<><div className="productSkeleton" style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div className="productSkeleton" style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div><div className="productSkeleton" style={{paddingLeft:"2rem",paddingRight:"2rem"}}><Skeleton width="86.5vw" length={1}/></div><div className="productSkeleton" style={{height:"60vh", paddingLeft:"2rem",paddingRight:"2rem", width:"89vw"}}><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/><Skeleton width="80vw" containerHeight="100%" height="100%" length={1}/></div></> : data?.homePageContent.productSections.map(( productSection ) => (<>
           <h1>
           {productSection.sectionLabel}
           <Link to="/search" className="findmore">More</Link>

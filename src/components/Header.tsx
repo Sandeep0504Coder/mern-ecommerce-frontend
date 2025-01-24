@@ -32,7 +32,7 @@ const Header = ( { user }: HeaderPropsType ) => {
 
     return (
         <nav className="header">
-            <img style={{position: "absolute", left: "0.5rem", top: "1.5rem", width: "2rem", height: "2rem", borderRadius: "50%"}} src="/src/assets/images/logo2.jpg"/>
+            <img style={{position: "absolute", left: "0.5rem", top: "1.5rem", width: "2rem", height: "2rem", borderRadius: "50%"}} src="https://res.cloudinary.com/dh9jmcvdt/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1737739879/logo2_w1unsy.jpg"/>
             <Link className="brandName" onClick={()=>{setIsOpen(false)}} to ="/">ShopSphere</Link>
             <Link onClick={()=>{setIsOpen(false)}} to ="/search"><FaSearch/></Link>
             <Badge badgeContent={cartItems.length} color="primary">

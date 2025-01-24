@@ -11,11 +11,16 @@ import { Skeleton } from "../components/Loader";
 import { useAllHomePageContentsQuery } from "../redux/api/homePageContentAPI";
 
 interface DataType {
+    photo: ReactElement;
     promotionalText: string;
     action: ReactElement;
 }
 
 const columns: Column<DataType>[] = [
+  {
+    Header: "Photo",
+    accessor: "photo",
+  },
   {
     Header: "Promotional Text",
     accessor: "promotionalText",
@@ -38,7 +43,8 @@ const HomePageManager = () => {
   useEffect( () => {
     if( data )
       setRows(
-        data.homePageContents.map( ( { _id, promotionalText } ) => ( {
+        data.homePageContents.map( ( { _id, banners, promotionalText } ) => ( {
+            photo: <img src={banners[0].url} />,
             promotionalText,
             action: <div style={{display: "flex",flexDirection:"row", gap:"4px", alignItems:"center"}}>
                 <Link to={`/admin/homePageContent/${_id}`}>Manage</Link>

@@ -13,14 +13,15 @@ interface SkeletonProps {
   length?: number;
   height?: string;
   containerHeight?: string;
+  className?: string;
 }
 
-export const Skeleton = ( { width = "unset", length = 3, height = "30px", containerHeight = "unset" }: SkeletonProps ) => {
+export const Skeleton = ( { width = "unset", length = 3, height = "30px", containerHeight = "unset", className= "" }: SkeletonProps ) => {
   const skeletons = Array.from( { length }, ( _, idx ) => (
     <div key={idx} className="skeleton-shape" style={{height}}></div>
   ) );
   return (
-    <div className="skeleton-loader" style={{ width, height: containerHeight }}>
+    <div className={`skeleton-loader ${className}`} style={{ width, height: containerHeight }}>
      {skeletons}
     </div>
   )
