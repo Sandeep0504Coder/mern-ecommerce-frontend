@@ -179,14 +179,14 @@ const Home = () => {
       </div>
       <article className="cover-video-container">
         <div className="cover-video-overlay"></div>
-        <video autoPlay loop muted src={videoCover} />
+        <video autoPlay loop muted src={ data?.homePageContent.promotionalVideo.url || videoCover} />
         <div className="cover-video-content">
           <motion.h2
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            Fashion
+            {data?.homePageContent.promotionalTextLabel}
           </motion.h2>
           {data?.homePageContent.promotionalText.split( " " ).map((el, i) => (
             <motion.span

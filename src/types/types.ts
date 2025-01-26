@@ -99,10 +99,15 @@ export type SystemSetting = {
 
 export type HomePageContent = {
     promotionalText: string;
+    promotionalTextLabel: string;
     banners: {
         public_id: string;
         url: string;
     }[];
+    promotionalVideo: {
+        public_id: string;
+        url: string;
+    };
     _id: string;
     productSections: ProductSectionType[];
 }
@@ -171,6 +176,7 @@ export interface ProductUpdateFormData {
 export type HomePageContentUpdateFormData = {
     productSectionsUpdate: ProductSectionType[];
     promotionalTextUpdate: string;
+    promotionalTextLabelUpdate: string;
 }
 
 export type CreateAddressFormData = {

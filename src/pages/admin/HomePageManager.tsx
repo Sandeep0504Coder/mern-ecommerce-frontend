@@ -1,25 +1,30 @@
 import { ReactElement, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
-import AdminSidebar from "../components/admin/AdminSidebar";
-import TableHOC from "../components/admin/TableHOC";
-import { RootState } from "../redux/store";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import TableHOC from "../../components/admin/TableHOC";
+import { RootState } from "../../redux/store";
 import toast from "react-hot-toast";
-import { CustomError } from "../types/api.types";
+import { CustomError } from "../../types/api.types";
 import { useSelector } from "react-redux";
-import { Skeleton } from "../components/Loader";
-import { useAllHomePageContentsQuery } from "../redux/api/homePageContentAPI";
+import { Skeleton } from "../../components/Loader";
+import { useAllHomePageContentsQuery } from "../../redux/api/homePageContentAPI";
 
 interface DataType {
-    photo: ReactElement;
+    banner: ReactElement;
     promotionalText: string;
+    promotionalTextLabel: string;
     action: ReactElement;
 }
 
 const columns: Column<DataType>[] = [
   {
-    Header: "Photo",
-    accessor: "photo",
+    Header: "Banner",
+    accessor: "banner",
+  },
+  {
+    Header: "Promotional Text Label",
+    accessor: "promotionalTextLabel",
   },
   {
     Header: "Promotional Text",
@@ -43,9 +48,10 @@ const HomePageManager = () => {
   useEffect( () => {
     if( data )
       setRows(
-        data.homePageContents.map( ( { _id, banners, promotionalText } ) => ( {
-            photo: <img src={banners[0].url} />,
+        data.homePageContents.map( ( { _id, banners, promotionalText, promotionalTextLabel } ) => ( {
+            banner: <img src={banners[0].url} />,
             promotionalText,
+            promotionalTextLabel,
             action: <div style={{display: "flex",flexDirection:"row", gap:"4px", alignItems:"center"}}>
                 <Link to={`/admin/homePageContent/${_id}`}>Manage</Link>
             </div>,

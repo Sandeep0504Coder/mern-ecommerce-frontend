@@ -4,7 +4,7 @@ import { responseToast } from "../../utils/features";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import {  UpdateAddressFormData } from "../../types/types";
-import { useAddressDetailsQuery, useDeleteAddressMutation, useUpdateAddressMutation } from "../../redux/api/userAPI";
+import { useAddressDetailsQuery, useDeleteAddressMutation, useMyAddressesQuery, useUpdateAddressMutation } from "../../redux/api/userAPI";
 import { Skeleton } from "../../components/Loader";
 import { FaTrash } from "react-icons/fa";
 import { modifySelectedShippingAddress } from "../../redux/reducer/cartReducer";
@@ -18,6 +18,7 @@ const AddressManagement = () => {
   const { selectedShippingAddressId } = useSelector( ( state: RootState ) => state.cartReducer );
   const [ btnLoading, setBtnLoading ] = useState<boolean>( false );
   const  { data, isLoading, isError } = useAddressDetailsQuery( params.id! );
+  const { data: myAddressesData, isLoading: myAddressesRequestLoading , isError: myAddressesIsError } = useMyAddressesQuery( user?._id! );
   const { data: allRegionsData, isLoading: allRegionRequestLoading , isError: allRegionRequestIsError } = useAllRegionsQuery( user?._id! );
   const [ updateAddress ] = useUpdateAddressMutation( );
   const [ deleteAddress ] = useDeleteAddressMutation( );
@@ -131,12 +132,12 @@ const AddressManagement = () => {
     }
   }, [ selectedCountryAbbr, allRegionsData ] );
 
-  if( isError || allRegionRequestIsError ) return <Navigate to={"/404"}/>;
+  if( isError || allRegionRequestIsError || myAddressesIsError ) return <Navigate to={"/404"}/>;
 
   return (
     <div className="create-address-container">
       <main className="address-management">
-        {isLoading || allRegionRequestLoading ? <Skeleton length={20}/> :
+        {isLoading || allRegionRequestLoading || myAddressesRequestLoading ? <Skeleton length={20}/> :
           <article>
             <button className="product-delete-btn" onClick={deleteAddressHandler}>
               <FaTrash />
@@ -245,6 +246,7 @@ const AddressManagement = () => {
                     type="checkbox"
                     name="isDefaultUpdate"
                     checked={isDefaultUpdate}
+                    disabled={myAddressesData?.addresses.length == 1}
                     onChange={changeInputHandler}
                 />
                 <span>Mark as Default Delivery Address</span>

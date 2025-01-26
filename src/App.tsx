@@ -11,7 +11,6 @@ import { getUser } from './redux/api/userAPI'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { RootState } from './redux/store'
 import Footer from './components/Footer'
-import HomePageManager from './pages/HomePageManager'
 
 const Home = lazy( ( ) => import( "./pages/Home" ) )
 const Cart = lazy( ( ) => import( "./pages/Cart" ) )
@@ -35,6 +34,7 @@ const Transaction = lazy(() => import("./pages/admin/transaction"));
 const Coupons = lazy(() => import("./pages/admin/Coupons"));
 const DeliveryRules = lazy(() => import("./pages/admin/DeliveryRules"));
 const SystemSettings = lazy(() => import("./pages/admin/SystemSettings"));
+const HomePageManager = lazy(() => import("./pages/admin/HomePageManager"));
 const Regions = lazy(() => import('./pages/admin/Regions'));
 const Barcharts = lazy(() => import("./pages/admin/charts/BarChats"));
 const Piecharts = lazy(() => import("./pages/admin/charts/piecharts"));

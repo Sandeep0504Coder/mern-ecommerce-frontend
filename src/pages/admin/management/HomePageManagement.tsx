@@ -22,12 +22,15 @@ const HomePageManagement = () => {
   const [ btnLoading, setBtnLoading ] = useState<boolean>( false );
   const [ homePageContentUpdate, setHomePageContentUpdate ] = useState<HomePageContentUpdateFormData>( {
     promotionalTextUpdate: "",
+    promotionalTextLabelUpdate: "",
     productSectionsUpdate: [],
   } );
 
-  const {promotionalTextUpdate, productSectionsUpdate } = homePageContentUpdate;
+  const {promotionalTextUpdate, promotionalTextLabelUpdate, productSectionsUpdate } = homePageContentUpdate;
 
-  const bannerssFile = useFileHandler( "multiple", 10, 5 );
+  const bannersFile = useFileHandler( "multiple", 10, 5 );
+
+  const promotionalVideoFile = useFileHandler( "single", 100, 1 );
 
   const submitHandler = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,11 +40,16 @@ const HomePageManagement = () => {
       let formData = new FormData( );
 
       if(promotionalTextUpdate) formData.set( "promotionalText", promotionalTextUpdate );
+      if(promotionalTextLabelUpdate) formData.set( "promotionalTextLabel", promotionalTextLabelUpdate );
 
-      if( bannerssFile.file && bannerssFile.file.length > 0 ){
-        bannerssFile.file.forEach( ( file )  => {
+      if( bannersFile.file && bannersFile.file.length > 0 ){
+        bannersFile.file.forEach( ( file )  => {
           formData.append( "banners", file );
         } )
+      }
+
+      if( promotionalVideoFile.file ){
+        formData.append( "promotionalVideo", promotionalVideoFile.file );
       }
 
       // Serialize the variants array
@@ -116,6 +124,7 @@ const HomePageManagement = () => {
         setHomePageContentUpdate( {
             productSectionsUpdate: data?.homePageContent.productSections,
             promotionalTextUpdate: data?.homePageContent.promotionalText!,
+            promotionalTextLabelUpdate: data?.homePageContent.promotionalTextLabel,
         } )
     }
   }, [ data ] );
@@ -136,9 +145,17 @@ const HomePageManagement = () => {
               <form onSubmit={submitHandler}>
                 <h2>Manage</h2>
                 <div>
-                  <label>Promotional Text</label>
+                  <label>Promotional Text Label</label>
                   <input
-                    type="text"
+                    placeholder="Promotional Text Label"
+                    value={promotionalTextLabelUpdate}
+                    name="promotionalTextLabelUpdate"
+                    onChange={changeInputHandler}
+                  />
+                </div>
+                <div>
+                  <label>Promotional Text</label>
+                  <textarea
                     placeholder="Promotional Text"
                     value={promotionalTextUpdate}
                     name="promotionalTextUpdate"
@@ -170,9 +187,9 @@ const HomePageManagement = () => {
                               required
                           />
                         </div>
-                        <button className="remove-config" onClick={( ) => removeProductSectionFilter( productSectionIndex, filterIndex )}>
+                        { filterIndex != 0 && <button className="remove-config" onClick={( ) => removeProductSectionFilter( productSectionIndex, filterIndex )}>
                           <IoIosRemoveCircleOutline />
-                        </button>
+                        </button>}
                       </div>
                     ) ) }
                     <button type="button" onClick={() => addFilterOption(productSectionIndex)}>Add Filter Option</button>
@@ -181,22 +198,35 @@ const HomePageManagement = () => {
                         <label>Product Section Label</label>
                         <input type="text" placeholder="Product Section Label" value={productSection.sectionLabel} onChange={(e) => handleProductSectionChange(productSectionIndex, "sectionLabel", e.target.value)} required />
                       </div>
-                      <button className="remove-variant" onClick={( ) => removeProductSection( productSectionIndex )}>
+                      {
+                        productSectionIndex !== 0 && <button className="remove-variant" onClick={( ) => removeProductSection( productSectionIndex )}>
                         <IoIosRemoveCircleOutline />
                       </button>
+                      }
                     </div>
                   </div>
                 ))}
                 <button type="button" onClick={addProductSection}>Add Product Section</button>
                 <div>
                   <label>banners</label>
-                  <input type="file" accept="images/*" multiple onChange={bannerssFile.changeHandler} />
+                  <input type="file" accept="images/*" multiple onChange={bannersFile.changeHandler} />
                 </div>
-                {bannerssFile.error && <p>{bannerssFile.error}</p>}
+                {bannersFile.error && <p>{bannersFile.error}</p>}
                 {
-                  bannerssFile.preview &&
+                  bannersFile.preview &&
                     <div style={{display: "flex", gap: "1rem", overflowX: "auto"}}>
-                      {bannerssFile.preview.map( ( img, i ) => ( <img style={{width: 100, height: 100, objectFit: "cover"}} key={i} src={img} alt="New Image"/> ) )}
+                      {bannersFile.preview.map( ( img, i ) => ( <img style={{width: 100, height: 100, objectFit: "cover"}} key={i} src={img} alt="New Image"/> ) )}
+                    </div>
+                }
+                <div>
+                  <label>Promotional Video</label>
+                  <input type="file" accept="video/*" onChange={promotionalVideoFile.changeHandler} />
+                </div>
+                {promotionalVideoFile.error && <p>{promotionalVideoFile.error}</p>}
+                {
+                  promotionalVideoFile.preview &&
+                    <div style={{display: "flex", gap: "1rem", overflowX: "auto"}}>
+                      <video style={{width: 100, height: 100, objectFit: "cover"}}   src={promotionalVideoFile.preview} autoPlay loop muted/>
                     </div>
                 }
                 <button disabled={btnLoading} type="submit">Update</button>

@@ -251,9 +251,9 @@ const Productmanagement = () => {
                               required
                           />
                         </div>
-                        <button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
+                        {configIndex != 0 &&<button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
                           <IoIosRemoveCircleOutline />
-                        </button>
+                        </button>}
                       </div>
                     ) ) }
                     <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>

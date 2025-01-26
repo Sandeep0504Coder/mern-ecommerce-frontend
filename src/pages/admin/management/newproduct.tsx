@@ -184,9 +184,9 @@ const NewProduct = () => {
                                 required
                             />
                           </div>
-                          <button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
-                          <IoIosRemoveCircleOutline />
-                        </button>
+                          {configIndex != 0 &&<button className="remove-config" onClick={( ) => removeVariantConfig( variantIndex, configIndex )}>
+                            <IoIosRemoveCircleOutline />
+                          </button>}
                       </div>
                   ))}
                   <button type="button" onClick={() => addConfigOption(variantIndex)}>Add Configuration Option</button>
