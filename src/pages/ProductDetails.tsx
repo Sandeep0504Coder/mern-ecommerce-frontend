@@ -448,7 +448,7 @@ const ProductDetails = () => {
             </dialog>
             <section>
                 <article>
-                    <h2>Bought Together</h2>
+                    <h2>Frequently Bought Together</h2>
                 </article>
                 <div className="product-recommendation">
                     {
