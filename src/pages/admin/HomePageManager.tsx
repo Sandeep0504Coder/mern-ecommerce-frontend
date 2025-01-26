@@ -64,7 +64,7 @@ const HomePageManager = () => {
     columns,
     rows,
     "dashboard-product-box",
-    "System Settings",
+    "Home Page Manager",
     rows.length > 6
   )();
 
