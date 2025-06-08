@@ -140,7 +140,7 @@ export interface HomePageContentDetailsResponse{
 }
 
 export interface SearchProductRequest{
-    price: number;
+    maxPrice: number;
     page: number;
     category: string;
     sort: string;

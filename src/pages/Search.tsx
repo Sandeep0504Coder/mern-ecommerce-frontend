@@ -21,7 +21,7 @@ const Search = () => {
   const [page, setPage] = useState<number>(1)
 
   const { data: searchProductData, isLoading: isSearchProcessing, isError: productIsError, error: productError } = useSearchProductsQuery( {
-    price: maxPrice,
+    maxPrice: maxPrice,
     page,
     category,
     sort,
